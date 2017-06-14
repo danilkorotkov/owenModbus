@@ -108,6 +108,7 @@ class TempThread(QtCore.QThread):  # работа с АЦП в потоке
 
                 print self.temp_array[Ch]
                 Ch+=1
+            print '-------------------', time.localtime(), '-------------------'
             self.temp_signal.emit(self.temp_array)
             time.sleep(3)
 
