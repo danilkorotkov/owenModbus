@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" serverName="ubuntu">
+  <component name="PublishConfigData" serverName="raspberry">
     <serverData>
-      <paths name="ubuntu">
+      <paths name="raspberry">
         <serverdata>
           <mappings>
             <mapping deploy="/owen" local="$PROJECT_DIR$" web="/" />

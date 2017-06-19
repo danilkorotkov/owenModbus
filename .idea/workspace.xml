@@ -2,9 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="86ace387-272a-443a-8067-713700a3f709" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/modbus.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/deployment.xml" afterPath="$PROJECT_DIR$/.idea/deployment.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/owenModbus.iml" afterPath="$PROJECT_DIR$/.idea/owenModbus.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/remote-mappings.xml" afterPath="$PROJECT_DIR$/.idea/remote-mappings.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/webServers.xml" afterPath="$PROJECT_DIR$/.idea/webServers.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/OwenSample.py" afterPath="$PROJECT_DIR$/OwenSample.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/TSystem/MySerial.py" afterPath="$PROJECT_DIR$/TSystem/MySerial.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mainwindow.py" afterPath="$PROJECT_DIR$/mainwindow.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/metro_uic.ui" afterPath="$PROJECT_DIR$/metro_uic.ui" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modbus.py" afterPath="$PROJECT_DIR$/modbus.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/timelabel.py" afterPath="$PROJECT_DIR$/timelabel.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -14,67 +23,69 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/owenModbus$OwenSample.coverage" NAME="OwenSample Coverage Results" MODIFIED="1497302282072" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/owenModbus$metro_uic.coverage" NAME="metro_uic Coverage Results" MODIFIED="1497383678117" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/owenModbus$modbus.coverage" NAME="modbus Coverage Results" MODIFIED="1497468312171" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/owenModbus$OwenSample.coverage" NAME="OwenSample Coverage Results" MODIFIED="1497890690454" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/owenModbus$modbus.coverage" NAME="modbus Coverage Results" MODIFIED="1497890145391" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/owenModbus$metro_uic.coverage" NAME="metro_uic Coverage Results" MODIFIED="1497909824678" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/owenModbus$mainwindow.coverage" NAME="mainwindow Coverage Results" MODIFIED="1497300254565" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="mainwindow.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="mainwindow.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/mainwindow.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="290">
-              <caret line="57" column="70" lean-forward="true" selection-start-line="57" selection-start-column="7" selection-end-line="57" selection-end-column="70" />
+            <state relative-caret-position="584">
+              <caret line="127" column="8" lean-forward="false" selection-start-line="127" selection-start-column="8" selection-end-line="127" selection-end-column="8" />
               <folding>
                 <element signature="e#24#79#0" expanded="true" />
-                <element signature="e#4077#5219#0" expanded="false" />
-                <element signature="e#6916#9526#0" expanded="false" />
-                <element signature="e#9751#10182#0" expanded="false" />
-                <element signature="e#10230#10311#0" expanded="false" />
-                <element signature="e#10354#10627#0" expanded="false" />
-                <element signature="e#10680#10892#0" expanded="false" />
-                <element signature="e#10945#11074#0" expanded="false" />
-                <element signature="e#11129#11400#0" expanded="false" />
-                <element signature="e#11453#11674#0" expanded="false" />
-                <element signature="e#11726#20513#0" expanded="false" />
-                <element signature="e#20608#21957#0" expanded="false" />
-                <element signature="e#22022#23451#0" expanded="false" />
-                <element signature="e#23528#24479#0" expanded="false" />
-                <element signature="e#24555#25506#0" expanded="false" />
-                <element signature="e#25578#28077#0" expanded="false" />
-                <element signature="e#28140#28278#0" expanded="false" />
-                <element signature="e#28333#28347#0" expanded="false" />
-                <element signature="e#28425#32405#0" expanded="false" />
-                <element signature="e#32521#32888#0" expanded="false" />
-                <element signature="e#32999#33695#0" expanded="false" />
-                <element signature="e#33773#34237#0" expanded="false" />
-                <element signature="e#34339#35218#0" expanded="false" />
-                <element signature="e#35290#35452#0" expanded="false" />
-                <element signature="e#35527#35546#0" expanded="false" />
-                <element signature="e#39552#39593#0" expanded="false" />
-                <element signature="e#39672#39827#0" expanded="false" />
-                <element signature="e#39930#40437#0" expanded="false" />
-                <element signature="e#40529#42522#0" expanded="false" />
-                <element signature="e#42635#45333#0" expanded="false" />
-                <element signature="e#45413#46328#0" expanded="false" />
-                <element signature="e#46370#46930#0" expanded="false" />
-                <element signature="e#47057#47321#0" expanded="false" />
-                <element signature="e#47349#48140#0" expanded="false" />
-                <element signature="e#48172#48427#0" expanded="false" />
+                <element signature="e#9913#10042#0" expanded="false" />
+                <element signature="e#10097#10368#0" expanded="false" />
+                <element signature="e#10421#10642#0" expanded="false" />
+                <element signature="e#19576#20925#0" expanded="false" />
+                <element signature="e#20990#22419#0" expanded="false" />
+                <element signature="e#22496#23447#0" expanded="false" />
+                <element signature="e#23523#24474#0" expanded="false" />
+                <element signature="e#24546#27045#0" expanded="false" />
+                <element signature="e#27108#27225#0" expanded="false" />
+                <element signature="e#27280#27294#0" expanded="false" />
+                <element signature="e#27372#31352#0" expanded="false" />
+                <element signature="e#31468#31835#0" expanded="false" />
+                <element signature="e#31946#32642#0" expanded="false" />
+                <element signature="e#32720#33184#0" expanded="false" />
+                <element signature="e#33286#34165#0" expanded="false" />
+                <element signature="e#34474#34493#0" expanded="false" />
+                <element signature="e#34572#38327#0" expanded="false" />
+                <element signature="e#38565#38720#0" expanded="false" />
+                <element signature="e#38823#39330#0" expanded="false" />
+                <element signature="e#39422#41415#0" expanded="false" />
+                <element signature="e#41528#44226#0" expanded="false" />
+                <element signature="e#44306#45221#0" expanded="false" />
+                <element signature="e#45263#45823#0" expanded="false" />
+                <element signature="e#45950#46214#0" expanded="false" />
+                <element signature="e#46242#47033#0" expanded="false" />
+                <element signature="e#47065#47320#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="modbus.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="modbus.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/modbus.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="150">
-              <caret line="10" column="1" lean-forward="false" selection-start-line="10" selection-start-column="1" selection-end-line="10" selection-end-column="1" />
+            <state relative-caret-position="345">
+              <caret line="23" column="0" lean-forward="false" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MySerial.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/TSystem/MySerial.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="495">
+              <caret line="33" column="34" lean-forward="false" selection-start-line="33" selection-start-column="34" selection-end-line="33" selection-end-column="34" />
               <folding>
-                <element signature="e#0#20#0" expanded="true" />
+                <element signature="e#23#50#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -83,8 +94,8 @@
       <file leaf-file-name="minimalmodbus.py" pinned="false" current-in-tab="false">
         <entry file="file://$USER_HOME$/Library/Caches/PyCharm2017.1/remote_sources/137468042/-278077348/minimalmodbus.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="109" column="19" lean-forward="true" selection-start-line="109" selection-start-column="19" selection-end-line="109" selection-end-column="19" />
+            <state relative-caret-position="1575">
+              <caret line="109" column="19" lean-forward="false" selection-start-line="109" selection-start-column="19" selection-end-line="109" selection-end-column="19" />
               <folding />
             </state>
           </provider>
@@ -93,10 +104,10 @@
       <file leaf-file-name="timelabel.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/timelabel.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="112">
-              <caret line="12" column="14" lean-forward="true" selection-start-line="12" selection-start-column="14" selection-end-line="12" selection-end-column="30" />
+            <state relative-caret-position="614">
+              <caret line="41" column="75" lean-forward="false" selection-start-line="41" selection-start-column="12" selection-end-line="41" selection-end-column="75" />
               <folding>
-                <element signature="e#24#45#0" expanded="true" />
+                <element signature="e#24#55#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -105,7 +116,7 @@
       <file leaf-file-name="graphwindow.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/graphwindow.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-41">
+            <state relative-caret-position="-1307">
               <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
@@ -115,8 +126,8 @@
       <file leaf-file-name="OwenSample.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/OwenSample.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="375">
-              <caret line="25" column="9" lean-forward="false" selection-start-line="25" selection-start-column="9" selection-end-line="25" selection-end-column="9" />
+            <state relative-caret-position="652">
+              <caret line="101" column="34" lean-forward="false" selection-start-line="101" selection-start-column="0" selection-end-line="102" selection-end-column="0" />
               <folding>
                 <element signature="e#24#46#0" expanded="true" />
               </folding>
@@ -127,7 +138,7 @@
       <file leaf-file-name="Owen.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/TOwen/Owen.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="211">
+            <state relative-caret-position="8595">
               <caret line="573" column="12" lean-forward="false" selection-start-line="573" selection-start-column="12" selection-end-line="573" selection-end-column="12" />
               <folding />
             </state>
@@ -146,6 +157,8 @@
   <component name="FindInProjectRecents">
     <findStrings>
       <find>payloa</find>
+      <find>finish_signal</find>
+      <find>coldStart</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -154,11 +167,11 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/TSystem/MySerial.py" />
+        <option value="$PROJECT_DIR$/modbus.py" />
         <option value="$PROJECT_DIR$/OwenSample.py" />
         <option value="$PROJECT_DIR$/timelabel.py" />
+        <option value="$PROJECT_DIR$/TSystem/MySerial.py" />
         <option value="$PROJECT_DIR$/mainwindow.py" />
-        <option value="$PROJECT_DIR$/modbus.py" />
       </list>
     </option>
   </component>
@@ -170,7 +183,7 @@
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="25" />
-    <option name="y" value="34" />
+    <option name="y" value="33" />
     <option name="width" value="1781" />
     <option name="height" value="1298" />
   </component>
@@ -190,7 +203,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
@@ -234,11 +246,12 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="settings.editor.selected.configurable" value="settings.github" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
   <component name="RunDashboard">
@@ -253,7 +266,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.modbus">
+  <component name="RunManager" selected="Python.metro_uic">
     <configuration default="false" name="OwenSample" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -506,20 +519,20 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="25" y="34" width="1781" height="1298" extended-state="0" />
+    <frame x="25" y="33" width="1781" height="1298" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295362" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3295362" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295362" sideWeight="0.5053341" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295362" sideWeight="0.4980348" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3295362" sideWeight="0.49466592" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24985963" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39951178" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -539,51 +552,377 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="1" />
+      <option name="time" value="2" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/mainwindow.py">
       <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#24#79#0" expanded="true" />
+            <element signature="e#9913#10042#0" expanded="false" />
+            <element signature="e#10097#10368#0" expanded="false" />
+            <element signature="e#10421#10642#0" expanded="false" />
+            <element signature="e#19576#20925#0" expanded="false" />
+            <element signature="e#20990#22419#0" expanded="false" />
+            <element signature="e#22496#23447#0" expanded="false" />
+            <element signature="e#23523#24474#0" expanded="false" />
+            <element signature="e#24546#27045#0" expanded="false" />
+            <element signature="e#27108#27225#0" expanded="false" />
+            <element signature="e#27280#27294#0" expanded="false" />
+            <element signature="e#27372#31352#0" expanded="false" />
+            <element signature="e#31468#31835#0" expanded="false" />
+            <element signature="e#31946#32642#0" expanded="false" />
+            <element signature="e#32720#33184#0" expanded="false" />
+            <element signature="e#33286#34165#0" expanded="false" />
+            <element signature="e#34474#34493#0" expanded="false" />
+            <element signature="e#34572#38327#0" expanded="false" />
+            <element signature="e#38565#38720#0" expanded="false" />
+            <element signature="e#38823#39330#0" expanded="false" />
+            <element signature="e#39422#41415#0" expanded="false" />
+            <element signature="e#41528#44226#0" expanded="false" />
+            <element signature="e#44306#45221#0" expanded="false" />
+            <element signature="e#45263#45823#0" expanded="false" />
+            <element signature="e#45950#46214#0" expanded="false" />
+            <element signature="e#46242#47033#0" expanded="false" />
+            <element signature="e#47065#47320#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/modbus.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="25" column="0" lean-forward="false" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2017.1/remote_sources/137468042/-278077348/minimalmodbus.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1575">
+          <caret line="109" column="19" lean-forward="false" selection-start-line="109" selection-start-column="19" selection-end-line="109" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/timelabel.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="12" column="14" lean-forward="false" selection-start-line="12" selection-start-column="14" selection-end-line="12" selection-end-column="30" />
+          <folding>
+            <element signature="e#24#55#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphwindow.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mainwindow.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="585">
+          <caret line="57" column="70" lean-forward="false" selection-start-line="57" selection-start-column="7" selection-end-line="57" selection-end-column="70" />
+          <folding>
+            <element signature="e#24#79#0" expanded="true" />
+            <element signature="e#9913#10042#0" expanded="false" />
+            <element signature="e#10097#10368#0" expanded="false" />
+            <element signature="e#10421#10642#0" expanded="false" />
+            <element signature="e#19576#20925#0" expanded="false" />
+            <element signature="e#20990#22419#0" expanded="false" />
+            <element signature="e#22496#23447#0" expanded="false" />
+            <element signature="e#23523#24474#0" expanded="false" />
+            <element signature="e#24546#27045#0" expanded="false" />
+            <element signature="e#27108#27225#0" expanded="false" />
+            <element signature="e#27280#27294#0" expanded="false" />
+            <element signature="e#27372#31352#0" expanded="false" />
+            <element signature="e#31468#31835#0" expanded="false" />
+            <element signature="e#31946#32642#0" expanded="false" />
+            <element signature="e#32720#33184#0" expanded="false" />
+            <element signature="e#33286#34165#0" expanded="false" />
+            <element signature="e#34474#34493#0" expanded="false" />
+            <element signature="e#34572#38327#0" expanded="false" />
+            <element signature="e#38565#38720#0" expanded="false" />
+            <element signature="e#38823#39330#0" expanded="false" />
+            <element signature="e#39422#41415#0" expanded="false" />
+            <element signature="e#41528#44226#0" expanded="false" />
+            <element signature="e#44306#45221#0" expanded="false" />
+            <element signature="e#45263#45823#0" expanded="false" />
+            <element signature="e#45950#46214#0" expanded="false" />
+            <element signature="e#46242#47033#0" expanded="false" />
+            <element signature="e#47065#47320#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/modbus.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="25" column="0" lean-forward="false" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2017.1/remote_sources/137468042/-278077348/minimalmodbus.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1575">
+          <caret line="109" column="19" lean-forward="false" selection-start-line="109" selection-start-column="19" selection-end-line="109" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/timelabel.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="12" column="14" lean-forward="false" selection-start-line="12" selection-start-column="14" selection-end-line="12" selection-end-column="30" />
+          <folding>
+            <element signature="e#24#55#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphwindow.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/TOwen/Owen.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="8595">
+          <caret line="573" column="12" lean-forward="false" selection-start-line="573" selection-start-column="12" selection-end-line="573" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/OwenSample.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1305">
+          <caret line="90" column="16" lean-forward="false" selection-start-line="90" selection-start-column="16" selection-end-line="90" selection-end-column="16" />
+          <folding>
+            <element signature="e#24#46#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mainwindow.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="855">
+          <caret line="57" column="70" lean-forward="false" selection-start-line="57" selection-start-column="7" selection-end-line="57" selection-end-column="70" />
+          <folding>
+            <element signature="e#24#79#0" expanded="true" />
+            <element signature="e#9913#10042#0" expanded="false" />
+            <element signature="e#10097#10368#0" expanded="false" />
+            <element signature="e#10421#10642#0" expanded="false" />
+            <element signature="e#19576#20925#0" expanded="false" />
+            <element signature="e#20990#22419#0" expanded="false" />
+            <element signature="e#22496#23447#0" expanded="false" />
+            <element signature="e#23523#24474#0" expanded="false" />
+            <element signature="e#24546#27045#0" expanded="false" />
+            <element signature="e#27108#27225#0" expanded="false" />
+            <element signature="e#27280#27294#0" expanded="false" />
+            <element signature="e#27372#31352#0" expanded="false" />
+            <element signature="e#31468#31835#0" expanded="false" />
+            <element signature="e#31946#32642#0" expanded="false" />
+            <element signature="e#32720#33184#0" expanded="false" />
+            <element signature="e#33286#34165#0" expanded="false" />
+            <element signature="e#34474#34493#0" expanded="false" />
+            <element signature="e#34572#38327#0" expanded="false" />
+            <element signature="e#38565#38720#0" expanded="false" />
+            <element signature="e#38823#39330#0" expanded="false" />
+            <element signature="e#39422#41415#0" expanded="false" />
+            <element signature="e#41528#44226#0" expanded="false" />
+            <element signature="e#44306#45221#0" expanded="false" />
+            <element signature="e#45263#45823#0" expanded="false" />
+            <element signature="e#45950#46214#0" expanded="false" />
+            <element signature="e#46242#47033#0" expanded="false" />
+            <element signature="e#47065#47320#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/modbus.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="25" column="0" lean-forward="false" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2017.1/remote_sources/137468042/-278077348/minimalmodbus.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1575">
+          <caret line="109" column="19" lean-forward="false" selection-start-line="109" selection-start-column="19" selection-end-line="109" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/timelabel.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" column="14" lean-forward="false" selection-start-line="12" selection-start-column="14" selection-end-line="12" selection-end-column="30" />
+          <folding>
+            <element signature="e#24#55#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphwindow.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/TOwen/Owen.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="8595">
+          <caret line="573" column="12" lean-forward="false" selection-start-line="573" selection-start-column="12" selection-end-line="573" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/OwenSample.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1350">
+          <caret line="90" column="16" lean-forward="false" selection-start-line="90" selection-start-column="16" selection-end-line="90" selection-end-column="16" />
+          <folding>
+            <element signature="e#24#46#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mainwindow.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="585">
+          <caret line="57" column="70" lean-forward="false" selection-start-line="57" selection-start-column="7" selection-end-line="57" selection-end-column="70" />
+          <folding>
+            <element signature="e#24#79#0" expanded="true" />
+            <element signature="e#9913#10042#0" expanded="false" />
+            <element signature="e#10097#10368#0" expanded="false" />
+            <element signature="e#10421#10642#0" expanded="false" />
+            <element signature="e#19576#20925#0" expanded="false" />
+            <element signature="e#20990#22419#0" expanded="false" />
+            <element signature="e#22496#23447#0" expanded="false" />
+            <element signature="e#23523#24474#0" expanded="false" />
+            <element signature="e#24546#27045#0" expanded="false" />
+            <element signature="e#27108#27225#0" expanded="false" />
+            <element signature="e#27280#27294#0" expanded="false" />
+            <element signature="e#27372#31352#0" expanded="false" />
+            <element signature="e#31468#31835#0" expanded="false" />
+            <element signature="e#31946#32642#0" expanded="false" />
+            <element signature="e#32720#33184#0" expanded="false" />
+            <element signature="e#33286#34165#0" expanded="false" />
+            <element signature="e#34474#34493#0" expanded="false" />
+            <element signature="e#34572#38327#0" expanded="false" />
+            <element signature="e#38565#38720#0" expanded="false" />
+            <element signature="e#38823#39330#0" expanded="false" />
+            <element signature="e#39422#41415#0" expanded="false" />
+            <element signature="e#41528#44226#0" expanded="false" />
+            <element signature="e#44306#45221#0" expanded="false" />
+            <element signature="e#45263#45823#0" expanded="false" />
+            <element signature="e#45950#46214#0" expanded="false" />
+            <element signature="e#46242#47033#0" expanded="false" />
+            <element signature="e#47065#47320#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2017.1/remote_sources/137468042/-278077348/minimalmodbus.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1575">
+          <caret line="109" column="19" lean-forward="true" selection-start-line="109" selection-start-column="19" selection-end-line="109" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/timelabel.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="12" column="14" lean-forward="true" selection-start-line="12" selection-start-column="14" selection-end-line="12" selection-end-column="30" />
+          <folding>
+            <element signature="e#24#55#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphwindow.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/OwenSample.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="25" column="9" lean-forward="false" selection-start-line="25" selection-start-column="9" selection-end-line="25" selection-end-column="9" />
+          <folding>
+            <element signature="e#24#46#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/TOwen/Owen.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="8595">
+          <caret line="573" column="12" lean-forward="false" selection-start-line="573" selection-start-column="12" selection-end-line="573" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/modbus.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="25" column="0" lean-forward="true" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mainwindow.py">
+      <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="135">
           <caret line="9" column="19" lean-forward="false" selection-start-line="9" selection-start-column="19" selection-end-line="9" selection-end-column="19" />
           <folding>
             <element signature="e#24#79#0" expanded="true" />
-            <element signature="e#4077#5219#0" expanded="false" />
-            <element signature="e#6916#9526#0" expanded="false" />
-            <element signature="e#9751#10182#0" expanded="false" />
-            <element signature="e#10230#10311#0" expanded="false" />
-            <element signature="e#10354#10627#0" expanded="false" />
-            <element signature="e#10680#10892#0" expanded="false" />
-            <element signature="e#10945#11074#0" expanded="false" />
-            <element signature="e#11129#11400#0" expanded="false" />
-            <element signature="e#11453#11674#0" expanded="false" />
-            <element signature="e#11726#20513#0" expanded="false" />
-            <element signature="e#20608#21957#0" expanded="false" />
-            <element signature="e#22022#23451#0" expanded="false" />
-            <element signature="e#23528#24479#0" expanded="false" />
-            <element signature="e#24555#25506#0" expanded="false" />
-            <element signature="e#25578#28077#0" expanded="false" />
-            <element signature="e#28140#28278#0" expanded="false" />
-            <element signature="e#28333#28347#0" expanded="false" />
-            <element signature="e#28425#32405#0" expanded="false" />
-            <element signature="e#32521#32888#0" expanded="false" />
-            <element signature="e#32999#33695#0" expanded="false" />
-            <element signature="e#33773#34237#0" expanded="false" />
-            <element signature="e#34339#35218#0" expanded="false" />
-            <element signature="e#35290#35452#0" expanded="false" />
-            <element signature="e#35527#35546#0" expanded="false" />
-            <element signature="e#39552#39593#0" expanded="false" />
-            <element signature="e#39672#39827#0" expanded="false" />
-            <element signature="e#39930#40437#0" expanded="false" />
-            <element signature="e#40529#42522#0" expanded="false" />
-            <element signature="e#42635#45333#0" expanded="false" />
-            <element signature="e#45413#46328#0" expanded="false" />
-            <element signature="e#46370#46930#0" expanded="false" />
-            <element signature="e#47057#47321#0" expanded="false" />
-            <element signature="e#47349#48140#0" expanded="false" />
-            <element signature="e#48172#48427#0" expanded="false" />
+            <element signature="e#9913#10042#0" expanded="false" />
+            <element signature="e#10097#10368#0" expanded="false" />
+            <element signature="e#10421#10642#0" expanded="false" />
+            <element signature="e#19576#20925#0" expanded="false" />
+            <element signature="e#20990#22419#0" expanded="false" />
+            <element signature="e#22496#23447#0" expanded="false" />
+            <element signature="e#23523#24474#0" expanded="false" />
+            <element signature="e#24546#27045#0" expanded="false" />
+            <element signature="e#27108#27225#0" expanded="false" />
+            <element signature="e#27280#27294#0" expanded="false" />
+            <element signature="e#27372#31352#0" expanded="false" />
+            <element signature="e#31468#31835#0" expanded="false" />
+            <element signature="e#31946#32642#0" expanded="false" />
+            <element signature="e#32720#33184#0" expanded="false" />
+            <element signature="e#33286#34165#0" expanded="false" />
+            <element signature="e#34474#34493#0" expanded="false" />
+            <element signature="e#34572#38327#0" expanded="false" />
+            <element signature="e#38565#38720#0" expanded="false" />
+            <element signature="e#38823#39330#0" expanded="false" />
+            <element signature="e#39422#41415#0" expanded="false" />
+            <element signature="e#41528#44226#0" expanded="false" />
+            <element signature="e#44306#45221#0" expanded="false" />
+            <element signature="e#45263#45823#0" expanded="false" />
+            <element signature="e#45950#46214#0" expanded="false" />
+            <element signature="e#46242#47033#0" expanded="false" />
+            <element signature="e#47065#47320#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -603,55 +942,10 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/TSystem/MySerial.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="33" column="13" lean-forward="false" selection-start-line="33" selection-start-column="13" selection-end-line="33" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/TOwen/trm251.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="495">
           <caret line="33" column="4" lean-forward="false" selection-start-line="33" selection-start-column="4" selection-end-line="33" selection-end-column="4" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/TOwen/Owen.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="211">
-          <caret line="573" column="12" lean-forward="false" selection-start-line="573" selection-start-column="12" selection-end-line="573" selection-end-column="12" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/OwenSample.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="25" column="9" lean-forward="false" selection-start-line="25" selection-start-column="9" selection-end-line="25" selection-end-column="9" />
-          <folding>
-            <element signature="e#24#46#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/timelabel.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="112">
-          <caret line="12" column="14" lean-forward="true" selection-start-line="12" selection-start-column="14" selection-end-line="12" selection-end-column="30" />
-          <folding>
-            <element signature="e#24#45#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/graphwindow.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-41">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -659,7 +953,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="6650">
           <caret line="708" column="6" lean-forward="false" selection-start-line="708" selection-start-column="6" selection-end-line="708" selection-end-column="6" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -667,7 +960,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="265">
           <caret line="314" column="8" lean-forward="false" selection-start-line="314" selection-start-column="8" selection-end-line="314" selection-end-column="8" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -675,7 +967,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="135">
           <caret line="3915" column="8" lean-forward="false" selection-start-line="3915" selection-start-column="8" selection-end-line="3915" selection-end-column="8" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -691,68 +982,126 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="265">
           <caret line="52" column="19" lean-forward="false" selection-start-line="52" selection-start-column="19" selection-end-line="52" selection-end-column="19" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$USER_HOME$/Library/Caches/PyCharm2017.1/remote_sources/137468042/-278077348/minimalmodbus.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="109" column="19" lean-forward="true" selection-start-line="109" selection-start-column="19" selection-end-line="109" selection-end-column="19" />
+        <state relative-caret-position="1575">
+          <caret line="109" column="19" lean-forward="false" selection-start-line="109" selection-start-column="19" selection-end-line="109" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/OwenSample.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="652">
+          <caret line="101" column="34" lean-forward="false" selection-start-line="101" selection-start-column="0" selection-end-line="102" selection-end-column="0" />
+          <folding>
+            <element signature="e#24#46#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/calibrator.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2857">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphwindow.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1307">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2017.1/python_stubs/137468042/PyQt4/QtGui/QWidget.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="710">
+          <caret line="93" column="8" lean-forward="false" selection-start-line="93" selection-start-column="8" selection-end-line="93" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/modbus.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="23" column="0" lean-forward="false" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/timelabel.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="614">
+          <caret line="41" column="75" lean-forward="false" selection-start-line="41" selection-start-column="12" selection-end-line="41" selection-end-column="75" />
+          <folding>
+            <element signature="e#24#55#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/TSystem/MySerial.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="495">
+          <caret line="33" column="34" lean-forward="false" selection-start-line="33" selection-start-column="34" selection-end-line="33" selection-end-column="34" />
+          <folding>
+            <element signature="e#23#50#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/TOwen/Owen.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="8595">
+          <caret line="573" column="12" lean-forward="false" selection-start-line="573" selection-start-column="12" selection-end-line="573" selection-end-column="12" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/mainwindow.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="290">
-          <caret line="57" column="70" lean-forward="true" selection-start-line="57" selection-start-column="7" selection-end-line="57" selection-end-column="70" />
+        <state relative-caret-position="584">
+          <caret line="127" column="8" lean-forward="false" selection-start-line="127" selection-start-column="8" selection-end-line="127" selection-end-column="8" />
           <folding>
             <element signature="e#24#79#0" expanded="true" />
-            <element signature="e#4077#5219#0" expanded="false" />
-            <element signature="e#6916#9526#0" expanded="false" />
-            <element signature="e#9751#10182#0" expanded="false" />
-            <element signature="e#10230#10311#0" expanded="false" />
-            <element signature="e#10354#10627#0" expanded="false" />
-            <element signature="e#10680#10892#0" expanded="false" />
-            <element signature="e#10945#11074#0" expanded="false" />
-            <element signature="e#11129#11400#0" expanded="false" />
-            <element signature="e#11453#11674#0" expanded="false" />
-            <element signature="e#11726#20513#0" expanded="false" />
-            <element signature="e#20608#21957#0" expanded="false" />
-            <element signature="e#22022#23451#0" expanded="false" />
-            <element signature="e#23528#24479#0" expanded="false" />
-            <element signature="e#24555#25506#0" expanded="false" />
-            <element signature="e#25578#28077#0" expanded="false" />
-            <element signature="e#28140#28278#0" expanded="false" />
-            <element signature="e#28333#28347#0" expanded="false" />
-            <element signature="e#28425#32405#0" expanded="false" />
-            <element signature="e#32521#32888#0" expanded="false" />
-            <element signature="e#32999#33695#0" expanded="false" />
-            <element signature="e#33773#34237#0" expanded="false" />
-            <element signature="e#34339#35218#0" expanded="false" />
-            <element signature="e#35290#35452#0" expanded="false" />
-            <element signature="e#35527#35546#0" expanded="false" />
-            <element signature="e#39552#39593#0" expanded="false" />
-            <element signature="e#39672#39827#0" expanded="false" />
-            <element signature="e#39930#40437#0" expanded="false" />
-            <element signature="e#40529#42522#0" expanded="false" />
-            <element signature="e#42635#45333#0" expanded="false" />
-            <element signature="e#45413#46328#0" expanded="false" />
-            <element signature="e#46370#46930#0" expanded="false" />
-            <element signature="e#47057#47321#0" expanded="false" />
-            <element signature="e#47349#48140#0" expanded="false" />
-            <element signature="e#48172#48427#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/modbus.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="10" column="1" lean-forward="false" selection-start-line="10" selection-start-column="1" selection-end-line="10" selection-end-column="1" />
-          <folding>
-            <element signature="e#0#20#0" expanded="true" />
+            <element signature="e#9913#10042#0" expanded="false" />
+            <element signature="e#10097#10368#0" expanded="false" />
+            <element signature="e#10421#10642#0" expanded="false" />
+            <element signature="e#19576#20925#0" expanded="false" />
+            <element signature="e#20990#22419#0" expanded="false" />
+            <element signature="e#22496#23447#0" expanded="false" />
+            <element signature="e#23523#24474#0" expanded="false" />
+            <element signature="e#24546#27045#0" expanded="false" />
+            <element signature="e#27108#27225#0" expanded="false" />
+            <element signature="e#27280#27294#0" expanded="false" />
+            <element signature="e#27372#31352#0" expanded="false" />
+            <element signature="e#31468#31835#0" expanded="false" />
+            <element signature="e#31946#32642#0" expanded="false" />
+            <element signature="e#32720#33184#0" expanded="false" />
+            <element signature="e#33286#34165#0" expanded="false" />
+            <element signature="e#34474#34493#0" expanded="false" />
+            <element signature="e#34572#38327#0" expanded="false" />
+            <element signature="e#38565#38720#0" expanded="false" />
+            <element signature="e#38823#39330#0" expanded="false" />
+            <element signature="e#39422#41415#0" expanded="false" />
+            <element signature="e#41528#44226#0" expanded="false" />
+            <element signature="e#44306#45221#0" expanded="false" />
+            <element signature="e#45263#45823#0" expanded="false" />
+            <element signature="e#45950#46214#0" expanded="false" />
+            <element signature="e#46242#47033#0" expanded="false" />
+            <element signature="e#47065#47320#0" expanded="false" />
           </folding>
         </state>
       </provider>

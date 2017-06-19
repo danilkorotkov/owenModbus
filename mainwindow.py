@@ -5,18 +5,17 @@ from PyQt4.Qt import Qt
 from PyQt4.QtGui import *
 import RPi.GPIO as GPIO
 from PyQt4.QtCore import pyqtSlot, QObject, SIGNAL
+import numpy as np
+import serial.rs485
 #-----------------owen protocol-------------------------
 from TOwen import Owen
 from TSystem import MySerial
-import serial.rs485
 
 # -------------------user classes----------------------------
 import metrocss
 from UserData import UserData
 from LongButton import LongButton, LockThread
 from graphwindow import GraphWindow
-from PinCode import PinCode
-from calibrator import Calibrator
 from timelabel import TimeThread
 
 # -------------------window forms----------------------------
@@ -32,9 +31,6 @@ DEGREE = u"\u00B0" + 'C'
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 
-A = 21
-B = 20
-C = 16
 Cont1 = 17
 Cont2 = 27
 OEBuff = 23
@@ -47,20 +43,20 @@ sets = {}
 FI = 300
 FT = 15
 
-Mux = (C, B, A)
-spi = spidev.SpiDev()
 pi = pigpio.pi()  # Connect to local host.
 
 try:
     COM = MySerial.ComPort('/dev/ttyUSB0', 57600,
-                           timeout=0.02)  # открываем COM12 (нумерация портов начинается с 0)
-    # COM = MySerial.ComPort(0, 9600, timeout=1)#открываем COM1 (нумерация портов начинается с 0)
-    COM.rs485_mode = serial.rs485.RS485Settings(delay_before_rx=0.003)
+                           timeout=0.2)  # открываем COM12 (нумерация портов начинается с 0)
 except:
     raise Exception('Error openning port!')
     # создаем устройство
-owenDev = Owen.OwenDevice(COM, 16)
-print owenDev
+
+try:
+    owenDev = Owen.OwenDevice(COM, 16)
+    print owenDev
+except Owen.OwenProtocolError:
+    print 'bad! fucking owen keeps silence'
 
 # --------------temp measure-----------------------
 class TempThread(QtCore.QThread):  # работа с АЦП в потоке
@@ -69,20 +65,31 @@ class TempThread(QtCore.QThread):  # работа с АЦП в потоке
         super(TempThread, self).__init__(parent)
         self.temp_signal = temp_signal
         self.isRun = False
-        self.temp_array = [0,0,0,0,0,0,0]
+        self.temp_array = np.array([[0.0, 0],
+                                   [0.0, 0],
+                                   [0.0, 0],
+                                   [0.0, 0],
+                                   [0.0, 0],
+                                   [0.0, 0],
+                                   [0.0, 0]])
+        #print self.temp_array.shape
 
     def run(self):
         while self.isRun:
+            a = datetime.datetime.now()
             Ch = 1
             while Ch <= 6:
                 try:
-                    # читаем с адреса базовый+1
-                    result2 = owenDev.GetIEEE32('rEAd', Ch-1, withTime=True)
-                    self.temp_array[Ch] = round(result2['value'], 1)
+                    # читаем с адреса базовый-1
+                    result = owenDev.GetIEEE32('rEAd', Ch-1, withTime=True)
+                    print 'Ch', Ch, 'res:', result
+                    self.temp_array[Ch][0] = round(result['value'],1)
+                    self.temp_array[Ch][1] = int(0)
                 except Owen.OwenUnpackError as e:
                     # обрабатываем ошибку раскодировки данных
-                    result2 = -100
                     if len(e.data) == 1:
+                        self.temp_array[Ch][1] = int(1)
+                        self.temp_array[Ch][0] = 0
                         # это код ошибки
                         if ord(e.data[0]) == 0xfd:
                             print u'Обрыв датчика'
@@ -98,79 +105,54 @@ class TempThread(QtCore.QThread):  # работа с АЦП в потоке
                             print u'Данные не готовы'
                         elif ord(e.data[0]) == 0xf0:
                             print u'Значение заведомо неверно'
-                    else: pass
+                    else:
+                        print 'wtf it needs?'
+                        if COM.isOpen():
+                            COM.close()
+                            COM.open()
                         # бросаем исклЮчение дальше
                         #raise Exception('Owen device::Error when getting value!')
                 #except:
                     # бросаем исклЮчение дальше
                     #raise Exception('Owen device::Error when getting value!')
                     #pass
+                except Owen.OwenProtocolError:
+                    print '2wtf it needs?'
+                    if COM.isOpen():
+                        COM.close()
+                        COM.open()
 
                 print self.temp_array[Ch]
                 Ch+=1
-            print '-------------------', time.localtime(), '-------------------'
+            s = time.localtime()
+            print '-------------------',str(s.tm_hour), ':', str(s.tm_min), ':', str(s.tm_sec), '-------------------'
             self.temp_signal.emit(self.temp_array)
-            time.sleep(3)
+            sleepparam = float(str(datetime.datetime.now() - a)[-6:]) / 1000000
+            print '-------------------', sleepparam, '-------------------'
+            time.sleep(5 - sleepparam)
 
     def stop(self):
         self.isRun = False
-
-class TempThread_back(QtCore.QThread):  # работа с АЦП в потоке
-    def __init__(self, temp_signal, parent=None):
-        super(TempThread, self).__init__(parent)
-        self.temp_signal = temp_signal
-        self.isRun = False
-        self.Va = list(range(7))
-
-    def run(self):
-        while self.isRun:
-            Ch = 1
-            while Ch <= 6:
-                self.SetChannel(Ch)
-                self.Va[Ch] = self.GetADC()
-                Ch += 1
-            self.temp_signal.emit(self.Va)
-            time.sleep(0.815)
-
-    def stop(self):
-        self.isRun = False
-
-    def GetADC(self):  # все названия сохранены на языке автора функции
-        M0 = 0
-        muestras = 0
-        while muestras <= 49:
-            adc = spi.xfer2([0, 0])
-            hi = (adc[0] & 0x1F);
-            low = (adc[1] & 0xFC);  # FE for B, FC for C chip (MCP3201-B/C) ©Danil
-            dato = (hi << 8) | low;
-            M0 += dato
-            muestras += 1
-        dato = M0 / 50
-        V = dato * 2.5 / 8192.0;
-        return V
-
-    def SetChannel(self, Ch):
-        if Ch >= 1 or Ch <= 6:
-            A = Ch >> 2
-            B = (Ch >> 1) & 1
-            C = Ch & 1
-            GPIO.output(Mux, (A, B, C))
-
 
 # -------------app window--------------------------
 # -------------------------------------------------
 class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
-    temp_signal = QtCore.pyqtSignal(list)
+    temp_signal = QtCore.pyqtSignal(np.ndarray)
     time_signal = QtCore.pyqtSignal(list)
     user_data_signal = QtCore.pyqtSignal(int, int)
-    pincode_signal = QtCore.pyqtSignal(str)
     lock_signal = QtCore.pyqtSignal()
-    finish_signal = QtCore.pyqtSignal()
 
     Fan1_On = 0  # fan on/off = 0/1
     Fan2_On = 0
     Line_65 = 0  # line on=1 line off=0
     Line_35 = 0
+    Tarray = np.array([[0.0, 0],
+                       [0.0, 0],
+                       [0.0, 0],
+                       [0.0, 0],
+                       [0.0, 0],
+                       [0.0, 0],
+                       [0.0, 0]])
     T1 = T2 = t1 = t2 = 0
     TRate1 = []  # log набора температуры
     TRate2 = []
@@ -270,11 +252,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.lockVirt.pressed.connect(self.UnlockButtons)
         self.lock_signal.connect(self.LockButtons, QtCore.Qt.QueuedConnection)
 
-        # --------------calibration button set--------------------
-        self.Calibr.pressed.connect(self.Calibration)
-        self.pincode_signal.connect(self.CheckPinCode, QtCore.Qt.QueuedConnection)
-        self.finish_signal.connect(self.ADC_ON, QtCore.Qt.QueuedConnection)
-
     # -------------------------------------------------
     # ---------------end app window--------------------
 
@@ -285,30 +262,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             _translate("Calibrator",
                        "<html><head/><body><p align=\"center\"><span style=\" font-size:16pt; font-weight:400;\">%s</span></p><p align=\"center\"><span style=\" font-size:26pt; font-weight:400;\">%s</span></p><p align=\"center\"><span style=\" font-size:16pt; font-weight:400;\">%s</span></p></body></html>" % (
                        out[0], out[1], out[2]), None))
-
-    @pyqtSlot()
-    def ADC_ON(self):
-        spi.open(0, 0)
-        spi.max_speed_hz = 40000
-        self.tempthreadcontrol(1)
-
-    def CheckPinCode(self, pin):
-        if pin == '2502':
-            self.tempthreadcontrol(0)
-            spi.close()
-            self.CalibrWindow = Calibrator(self.finish_signal, self)
-            self.CalibrWindow.show()
-        else:
-            pass
-        self.Calibr.setStyleSheet(metrocss.prog_passive)
-
-    @pyqtSlot()
-    def Calibration(self):
-        if self.lockedBut: return
-        self.Calibr.setStyleSheet(metrocss.prog_active)
-        self.CodeWindow = PinCode(self.pincode_signal, self)
-        self.CodeWindow.show()
-        self.CodeWindow.move(313, 195)
+        if self.coldStart == 1:
+            self.ShowResults(self.Tarray)
 
     @pyqtSlot()
     def LockButtons(self):
@@ -675,8 +630,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def All_is_Clear(self):  # корректное завершение
         self.tempthreadcontrol(0)
         self.timelabel.stop()
-
-        spi.close()
         pi.stop()
         GPIO.cleanup()
         self.close()
@@ -873,40 +826,40 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # -------------рассчитываем температуры по разрешенным датчикам---------
         if sets['sensor1_1'] == 1 and sets['sensor1_2'] == 1:
-            self.MTemp1 = (self.MTemp1 * self.coldStart1 + (float(Tin[1]) + float(Tin[2])) / 2) / alph
+            self.MTemp1 = (self.MTemp1 * self.coldStart1 + (Tin[1][0] + Tin[2][0]) / 2) / alph
             self.MainTemp1.setHtml(metrocss.Show_Main_Temp("%.1f" % self.MTemp1))
-            self.Channel1.setHtml(metrocss.Show_temp(Tin[1]))
-            self.Channel2.setHtml(metrocss.Show_temp(Tin[2]))
+            self.Channel1.setHtml(metrocss.Show_temp(Tin[1][0]))
+            self.Channel2.setHtml(metrocss.Show_temp(Tin[2][0]))
         elif sets['sensor1_1'] == 0 and sets['sensor1_2'] == 1:
-            self.MTemp1 = (self.MTemp1 * self.coldStart1 + float(Tin[2])) / alph
+            self.MTemp1 = (self.MTemp1 * self.coldStart1 + Tin[2][0]) / alph
             self.MainTemp1.setHtml(metrocss.Show_Main_Temp("%.1f" % self.MTemp1))
             self.Channel1.setHtml(metrocss.Show_temp("NaN"))
-            self.Channel2.setHtml(metrocss.Show_temp(Tin[2]))
+            self.Channel2.setHtml(metrocss.Show_temp(Tin[2][0]))
         elif sets['sensor1_1'] == 1 and sets['sensor1_2'] == 0:
-            self.MTemp1 = (self.MTemp1 * self.coldStart1 + float(Tin[1])) / alph
+            self.MTemp1 = (self.MTemp1 * self.coldStart1 + Tin[1][0]) / alph
             self.MainTemp1.setHtml(metrocss.Show_Main_Temp("%.1f" % self.MTemp1))
-            self.Channel1.setHtml(metrocss.Show_temp(Tin[1]))
+            self.Channel1.setHtml(metrocss.Show_temp(Tin[1][0]))
             self.Channel2.setHtml(metrocss.Show_temp("NaN"))
 
-        self.Channel3.setHtml(metrocss.Show_temp(Tin[3]))  # Тэны всегда!
-        self.Channel6.setHtml(metrocss.Show_temp(Tin[6]))
-        self.Heater1 = Tin[3]
-        self.Heater2 = Tin[6]
+        self.Channel3.setHtml(metrocss.Show_temp(Tin[3][0]))  # Тэны всегда!
+        self.Channel6.setHtml(metrocss.Show_temp(Tin[6][0]))
+        self.Heater1 = Tin[3][0]
+        self.Heater2 = Tin[6][0]
 
         if sets['sensor2_1'] == 1 and sets['sensor2_2'] == 1:
-            self.MTemp2 = (self.MTemp2 * self.coldStart2 + (float(Tin[4]) + float(Tin[5])) / 2) / bet
+            self.MTemp2 = (self.MTemp2 * self.coldStart2 + (Tin[4][0] + Tin[5][0]) / 2) / bet
             self.MainTemp2.setHtml(metrocss.Show_Main_Temp("%.1f" % self.MTemp2))
-            self.Channel4.setHtml(metrocss.Show_temp(Tin[4]))
-            self.Channel5.setHtml(metrocss.Show_temp(Tin[5]))
+            self.Channel4.setHtml(metrocss.Show_temp(Tin[4][0]))
+            self.Channel5.setHtml(metrocss.Show_temp(Tin[5][0]))
         elif sets['sensor2_1'] == 0 and sets['sensor2_2'] == 1:
-            self.MTemp2 = (self.MTemp2 * self.coldStart2 + float(Tin[5])) / bet
+            self.MTemp2 = (self.MTemp2 * self.coldStart2 + Tin[5][0]) / bet
             self.MainTemp2.setHtml(metrocss.Show_Main_Temp("%.1f" % self.MTemp2))
             self.Channel4.setHtml(metrocss.Show_temp("NaN"))
-            self.Channel5.setHtml(metrocss.Show_temp(Tin[5]))
+            self.Channel5.setHtml(metrocss.Show_temp(Tin[5][0]))
         elif sets['sensor2_1'] == 1 and sets['sensor2_2'] == 0:
-            self.MTemp2 = (self.MTemp2 * self.coldStart2 + float(Tin[4])) / bet
+            self.MTemp2 = (self.MTemp2 * self.coldStart2 + Tin[4][0]) / bet
             self.MainTemp2.setHtml(metrocss.Show_Main_Temp("%.1f" % self.MTemp2))
-            self.Channel4.setHtml(metrocss.Show_temp(Tin[4]))
+            self.Channel4.setHtml(metrocss.Show_temp(Tin[4][0]))
             self.Channel5.setHtml(metrocss.Show_temp("NaN"))
 
         # -------------работаем со стеком значений температур---------
@@ -942,12 +895,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         # -----вызываем обработку состояния вкл/выкл линии по полученным данным----
         self.DoMainWork()
 
-    def ConvertResults(self, Va):  # преобразование вольты в градусы
-        Tout = Va
-        return Tout
 
     def got_worker_msg(self, Va):  # ловля сигнала от АЦП
-        self.ShowResults(self.ConvertResults(Va))
+        self.Tarray = Va
+        if self.coldStart == 0:
+            self.ShowResults(self.Tarray)
 
     def tempthreadcontrol(self, command):  # запуск/остановка потока
         if command == 1:
@@ -1165,11 +1117,6 @@ def save_settings(sets):
 
 
 def call_board_ini():
-    GPIO.setup(Mux, GPIO.OUT)
-    GPIO.output(Mux, (0, 0, 0))
-
-    spi.open(0, 0)
-    spi.max_speed_hz = 40000
 
     GPIO.setup([Fan1, Fan2, OEBuff, SSRPwm0, SSRPwm1, Cont1, Cont2], GPIO.OUT)
     GPIO.output([Fan1, Fan2, OEBuff, SSRPwm0, SSRPwm0, Cont1, Cont2], 0)
@@ -1178,26 +1125,20 @@ def call_board_ini():
     pi.set_PWM_dutycycle(SSRPwm1, 0)  # после выхода и нового запуска кода
 
     # создаем последовательный порт
-
-    try:
-        devName = owenDev.GetDeviceName()
-        print 'Device name: {}'.format(devName)
-        #Прошивка
-        result = owenDev.GetFirmwareVersion()
-        print 'Firmware version: {}'.format(result)
-    except Owen.OwenProtocolError:
-        pass
-        # COM.close()
-        # time.sleep(0.3)
-        # COM.open()
-        # owenDev = Owen.OwenDevice(COM, 16)
-        # devName = owenDev.GetDeviceName()
-        # print 'Device name: {}'.format(devName)
-        # #Прошивка
-        # result = owenDev.GetFirmwareVersion()
-
-
-
+    it=True
+    while it:
+        try:
+            devName = owenDev.GetDeviceName()
+            print 'Device name: {}'.format(devName)
+            #Прошивка
+            result = owenDev.GetFirmwareVersion()
+            print 'Firmware version: {}'.format(result)
+            it = False
+        except Owen.OwenProtocolError:
+            print 'ffff owen'
+            if COM.isOpen():
+                COM.close()
+                COM.open()
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8

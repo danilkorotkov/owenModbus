@@ -3,10 +3,10 @@ import serial, serial.rs485
 import time
 
 #класс последовательного порта с логированием данных
-class ComPort(serial.rs485.RS485):
-    def __init__(self, port=None, baudrate=115200, bytesize=8, parity='N', stopbits=1, timeout=None, xonxoff=0, \
+class ComPort(serial.Serial):
+    def __init__(self, port=None, baudrate=57600, bytesize=8, parity='N', stopbits=1, timeout=None, xonxoff=0, \
                  rtscts=0, writeTimeout=0.02, dsrdtr=None):
-        serial.rs485.RS485.__init__(self, port, baudrate, bytesize, parity, stopbits, timeout, xonxoff, rtscts, \
+        serial.Serial.__init__(self, port, baudrate, bytesize, parity, stopbits, timeout, xonxoff, rtscts, \
                                    writeTimeout, dsrdtr)                        
         self.LoggingIsOn=False;
                 
@@ -29,9 +29,9 @@ class ComPort(serial.rs485.RS485):
         
     def write(self, buffer, obj_name=None):
         if self.isOpen():
-            #serial.rs485.RS485.flush()
-            serial.rs485.RS485.write(self,buffer)
-            #serial.rs485.RS485.flush()
+            #serial.Serial.flush()
+            serial.Serial.write(self,buffer)
+            #serial.Serial.flush()
             self.log(buffer, obj_name, 'writing')
             return (True,'')
         else:
@@ -40,7 +40,7 @@ class ComPort(serial.rs485.RS485):
         
     def read(self, size, obj_name=None):
         if self.isOpen():
-            buffer = serial.rs485.RS485.read(self,size)
+            buffer = serial.Serial.read(self,size)
             self.log(buffer, obj_name, 'reading')
             return (True,buffer)
         else:
