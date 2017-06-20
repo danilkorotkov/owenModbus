@@ -28,10 +28,10 @@ class ComPort(serial.Serial):
             log_file.close()
         
     def write(self, buffer, obj_name=None):
+        if not self.isOpen():
+            self.open()
         if self.isOpen():
-            #serial.Serial.flush()
             serial.Serial.write(self,buffer)
-            #serial.Serial.flush()
             self.log(buffer, obj_name, 'writing')
             return (True,'')
         else:
@@ -42,6 +42,7 @@ class ComPort(serial.Serial):
         if self.isOpen():
             buffer = serial.Serial.read(self,size)
             self.log(buffer, obj_name, 'reading')
+            self.close()
             return (True,buffer)
         else:
             self.log(buffer, obj_name, 'reading::error:port_not_open')                        

@@ -47,7 +47,7 @@ pi = pigpio.pi()  # Connect to local host.
 
 try:
     COM = MySerial.ComPort('/dev/ttyUSB0', 57600,
-                           timeout=0.2)  # открываем COM12 (нумерация портов начинается с 0)
+                           timeout=0.5)  # открываем COM12 (нумерация портов начинается с 0)
 except:
     raise Exception('Error openning port!')
     # создаем устройство
@@ -65,6 +65,7 @@ class TempThread(QtCore.QThread):  # работа с АЦП в потоке
         super(TempThread, self).__init__(parent)
         self.temp_signal = temp_signal
         self.isRun = False
+        self.counter=0
         self.temp_array = np.array([[0.0, 0],
                                    [0.0, 0],
                                    [0.0, 0],
@@ -118,6 +119,8 @@ class TempThread(QtCore.QThread):  # работа с АЦП в потоке
                     #pass
                 except Owen.OwenProtocolError:
                     print '2wtf it needs?'
+                    self.counter += 1
+                    #COM.flushInput()
                     if COM.isOpen():
                         COM.close()
                         COM.open()
@@ -129,7 +132,8 @@ class TempThread(QtCore.QThread):  # работа с АЦП в потоке
             self.temp_signal.emit(self.temp_array)
             sleepparam = float(str(datetime.datetime.now() - a)[-6:]) / 1000000
             print '-------------------', sleepparam, '-------------------'
-            time.sleep(5 - sleepparam)
+            print 'errcount=', self.counter
+            time.sleep(1 - sleepparam)
 
     def stop(self):
         self.isRun = False
