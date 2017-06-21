@@ -66,6 +66,7 @@ class TempThread(QtCore.QThread):  # работа с АЦП в потоке
         self.temp_signal = temp_signal
         self.isRun = False
         self.counter=0
+        self.counter2=0
         self.temp_array = np.array([[0.0, 0],
                                    [0.0, 0],
                                    [0.0, 0],
@@ -73,7 +74,6 @@ class TempThread(QtCore.QThread):  # работа с АЦП в потоке
                                    [0.0, 0],
                                    [0.0, 0],
                                    [0.0, 0]])
-        #print self.temp_array.shape
 
     def run(self):
         while self.isRun:
@@ -131,8 +131,10 @@ class TempThread(QtCore.QThread):  # работа с АЦП в потоке
             print '-------------------',str(s.tm_hour), ':', str(s.tm_min), ':', str(s.tm_sec), '-------------------'
             self.temp_signal.emit(self.temp_array)
             sleepparam = float(str(datetime.datetime.now() - a)[-6:]) / 1000000
-            print '-------------------', sleepparam, '-------------------'
             print 'errcount=', self.counter
+            self.counter2 +=1
+            print 'itercount=', self.counter2
+            print '-------------------', sleepparam, '-------------------'
             time.sleep(1 - sleepparam)
 
     def stop(self):

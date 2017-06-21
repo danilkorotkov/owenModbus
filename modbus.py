@@ -18,13 +18,18 @@ print instrument
 #print instrument.get_all_pattern_variables(0)
 #instrument.serial.setRTS(1)
 print instrument.serial.rts
+counter = 0
 while True:
     try:
         temperature = instrument.read_register(1, functioncode=3, signed=True, numberOfDecimals=1) # Registernumber, number of decimals
-        t2 = instrument.read_registers(1+6*7, numberOfRegisters = 2)
+        t2 = instrument.read_registers(1+6*5, numberOfRegisters = 2)
+        t3 = instrument.read_registers(1 + 6 * 2, numberOfRegisters=2)
     except IOError:
         error +=1
     print 'error', error
+    counter += 1
+    print 'counter', counter
     print 't= ', temperature
-    print 't2= ', t2[0], t2[1], t2[::]
-    time.sleep(1)
+    print 't2= ', t2[0], t2[1], float(-65535 + t2[0])/10
+    print 't3= ', float(t3[0])/10, t3[1], 65535 - t3[0]
+    time.sleep(0.1)
