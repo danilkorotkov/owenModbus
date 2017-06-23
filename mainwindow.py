@@ -42,25 +42,30 @@ Freq = 2
 sets = {}
 FI = 300
 FT = 15
+error_buffer = ['','','','','']
 
 pi = pigpio.pi()  # Connect to local host.
+
+def s_log(a):
+    error_buffer.append(a)
+    error_buffer.pop(1)
 
 try:
     COM = MySerial.ComPort('/dev/ttyUSB0', 57600,
                            timeout=0.5)  # открываем COM12 (нумерация портов начинается с 0)
 except:
     raise Exception('Error openning port!')
-    # создаем устройство
+    #s_log(u'Error openning port!')
 
 try:
     owenDev = Owen.OwenDevice(COM, 16)
     print owenDev
 except Owen.OwenProtocolError:
     print 'bad! fucking owen keeps silence'
+    s_log(u'bad! fucking owen keeps silence')
 
 # --------------temp measure-----------------------
 class TempThread(QtCore.QThread):  # работа с АЦП в потоке
-    #global owenDev
     def __init__(self, temp_signal, parent=None):
         super(TempThread, self).__init__(parent)
         self.temp_signal = temp_signal
@@ -94,31 +99,34 @@ class TempThread(QtCore.QThread):  # работа с АЦП в потоке
                         # это код ошибки
                         if ord(e.data[0]) == 0xfd:
                             print u'Обрыв датчика'
+                            s_log(u'Обрыв датчика, канал: ' + str(Ch))
                         elif ord(e.data[0]) == 0xff:
                             print u'Некорректный калибровочный коэффициент'
+                            s_log(u'Некорректный калибровочный коэффициент, канал: ' + str(Ch))
                         elif ord(e.data[0]) == 0xfb:
                             print u'Измеренное значение слишком мало'
+                            s_log(u'Измеренное значение слишком мало, канал: ' + str(Ch))
                         elif ord(e.data[0]) == 0xfa:
                             print u'Измеренное значение слишком велико'
+                            s_log(u'Измеренное значение слишком велико, канал: ' + str(Ch))
                         elif ord(e.data[0]) == 0xf7:
                             print u'Датчик отключен'
+                            s_log(u'Датчик отключен, канал: ' + str(Ch))
                         elif ord(e.data[0]) == 0xf6:
                             print u'Данные не готовы'
+                            s_log(u'Данные не готовы ' + str(Ch))
                         elif ord(e.data[0]) == 0xf0:
                             print u'Значение заведомо неверно'
+                            s_log(u'Значение заведомо неверно, канал: ' + str(Ch))
                     else:
                         print 'wtf it needs?'
+                        s_log(u'Порт отвалился, канал: ' + str(Ch))
                         if COM.isOpen():
                             COM.close()
                             COM.open()
-                        # бросаем исклЮчение дальше
-                        #raise Exception('Owen device::Error when getting value!')
-                #except:
-                    # бросаем исклЮчение дальше
-                    #raise Exception('Owen device::Error when getting value!')
-                    #pass
                 except Owen.OwenProtocolError:
                     print '2wtf it needs?'
+                    s_log(u'Порт отвалился, канал: ' + str(Ch))
                     self.counter += 1
                     #COM.flushInput()
                     if COM.isOpen():
@@ -131,9 +139,10 @@ class TempThread(QtCore.QThread):  # работа с АЦП в потоке
             print '-------------------',str(s.tm_hour), ':', str(s.tm_min), ':', str(s.tm_sec), '-------------------'
             self.temp_signal.emit(self.temp_array)
             sleepparam = float(str(datetime.datetime.now() - a)[-6:]) / 1000000
-            print 'errcount=', self.counter
             self.counter2 +=1
-            print 'itercount=', self.counter2
+            eline = u'Ошибки = ' + str(self.counter) + u', ' + u'Вызовы = ' + str(self.counter2)
+            error_buffer[0] = eline
+            print error_buffer[0]
             print '-------------------', sleepparam, '-------------------'
             time.sleep(1 - sleepparam)
 
@@ -264,12 +273,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     # ----------------------------methods------------------------------
     def time_msg(self, out):
-        self.labeloftime.setText( \
-            _translate("Calibrator",
-                       "<html><head/><body><p align=\"center\"><span style=\" font-size:16pt; font-weight:400;\">%s</span></p><p align=\"center\"><span style=\" font-size:26pt; font-weight:400;\">%s</span></p><p align=\"center\"><span style=\" font-size:16pt; font-weight:400;\">%s</span></p></body></html>" % (
-                       out[0], out[1], out[2]), None))
+        self.labeloftime.setText(_translate("Calibrator","<html><head/><body><p align=\"center\"><span style=\" font-size:16pt; font-weight:400;\">%s</span></p><p align=\"center\"><span style=\" font-size:26pt; font-weight:400;\">%s</span></p><p align=\"center\"><span style=\" font-size:16pt; font-weight:400;\">%s</span></p></body></html>" % (out[0], out[1], out[2]), None))
         if self.coldStart == 1:
             self.ShowResults(self.Tarray)
+        self.ErrorPanel.setHtml(metrocss.Show_err(error_buffer))
 
     @pyqtSlot()
     def LockButtons(self):
@@ -1080,6 +1087,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
 
 # ------------globals func-----------------------------
+
 def save_log(file_name, temp, power, state, fan_state, heater):
     t = time.time()
     if file_name != '':
@@ -1135,13 +1143,19 @@ def call_board_ini():
     while it:
         try:
             devName = owenDev.GetDeviceName()
-            print 'Device name: {}'.format(devName)
+            _name = u'Модуль ввода: {}'.format(devName)
+            #s_log(_name)
+            print _name
             #Прошивка
             result = owenDev.GetFirmwareVersion()
-            print 'Firmware version: {}'.format(result)
+            _firm = u'Версия ПО: {}'.format(result)
+            s_log(_name + ' ' + _firm)
+            print _firm
             it = False
+            print error_buffer
         except Owen.OwenProtocolError:
             print 'ffff owen'
+            s_log(u'Порт отвалился на чтении Модуля ввода')
             if COM.isOpen():
                 COM.close()
                 COM.open()
