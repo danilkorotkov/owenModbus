@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="86ace387-272a-443a-8067-713700a3f709" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mainwindow.py" afterPath="$PROJECT_DIR$/mainwindow.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/metro_uic.ui" afterPath="$PROJECT_DIR$/metro_uic.ui" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/metrocss.py" afterPath="$PROJECT_DIR$/metrocss.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/modbus.py" afterPath="$PROJECT_DIR$/modbus.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -27,8 +24,8 @@
       <file leaf-file-name="mainwindow.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/mainwindow.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="354">
-              <caret line="1157" column="51" lean-forward="false" selection-start-line="1157" selection-start-column="51" selection-end-line="1157" selection-end-column="51" />
+            <state relative-caret-position="225">
+              <caret line="832" column="0" lean-forward="false" selection-start-line="832" selection-start-column="0" selection-end-line="832" selection-end-column="0" />
               <folding>
                 <element signature="e#24#79#0" expanded="true" />
                 <element signature="e#10723#10852#0" expanded="false" />
@@ -47,6 +44,7 @@
                 <element signature="e#33530#33994#0" expanded="false" />
                 <element signature="e#34096#34975#0" expanded="false" />
                 <element signature="e#35284#35303#0" expanded="false" />
+                <element signature="e#35382#39137#0" expanded="false" />
                 <element signature="e#39375#39530#0" expanded="false" />
                 <element signature="e#39633#40140#0" expanded="false" />
                 <element signature="e#40232#42225#0" expanded="false" />
@@ -557,7 +555,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="25" y="33" width="1484" height="1298" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295362" sideWeight="0.5053341" order="7" side_tool="true" content_ui="tabs" />
@@ -566,7 +563,7 @@
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3291874" sideWeight="0.49466592" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.30859917" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.30859917" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -589,7 +586,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="2" />
+      <option name="time" value="3" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -650,6 +647,7 @@
             <element signature="e#33530#33994#0" expanded="false" />
             <element signature="e#34096#34975#0" expanded="false" />
             <element signature="e#35284#35303#0" expanded="false" />
+            <element signature="e#35382#39137#0" expanded="false" />
             <element signature="e#39375#39530#0" expanded="false" />
             <element signature="e#39633#40140#0" expanded="false" />
             <element signature="e#40232#42225#0" expanded="false" />
@@ -737,6 +735,7 @@
             <element signature="e#33530#33994#0" expanded="false" />
             <element signature="e#34096#34975#0" expanded="false" />
             <element signature="e#35284#35303#0" expanded="false" />
+            <element signature="e#35382#39137#0" expanded="false" />
             <element signature="e#39375#39530#0" expanded="false" />
             <element signature="e#39633#40140#0" expanded="false" />
             <element signature="e#40232#42225#0" expanded="false" />
@@ -824,6 +823,7 @@
             <element signature="e#33530#33994#0" expanded="false" />
             <element signature="e#34096#34975#0" expanded="false" />
             <element signature="e#35284#35303#0" expanded="false" />
+            <element signature="e#35382#39137#0" expanded="false" />
             <element signature="e#39375#39530#0" expanded="false" />
             <element signature="e#39633#40140#0" expanded="false" />
             <element signature="e#40232#42225#0" expanded="false" />
@@ -911,6 +911,7 @@
             <element signature="e#33530#33994#0" expanded="false" />
             <element signature="e#34096#34975#0" expanded="false" />
             <element signature="e#35284#35303#0" expanded="false" />
+            <element signature="e#35382#39137#0" expanded="false" />
             <element signature="e#39375#39530#0" expanded="false" />
             <element signature="e#39633#40140#0" expanded="false" />
             <element signature="e#40232#42225#0" expanded="false" />
@@ -1117,8 +1118,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/mainwindow.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="354">
-          <caret line="1157" column="51" lean-forward="false" selection-start-line="1157" selection-start-column="51" selection-end-line="1157" selection-end-column="51" />
+        <state relative-caret-position="225">
+          <caret line="832" column="0" lean-forward="false" selection-start-line="832" selection-start-column="0" selection-end-line="832" selection-end-column="0" />
           <folding>
             <element signature="e#24#79#0" expanded="true" />
             <element signature="e#10723#10852#0" expanded="false" />
@@ -1137,6 +1138,7 @@
             <element signature="e#33530#33994#0" expanded="false" />
             <element signature="e#34096#34975#0" expanded="false" />
             <element signature="e#35284#35303#0" expanded="false" />
+            <element signature="e#35382#39137#0" expanded="false" />
             <element signature="e#39375#39530#0" expanded="false" />
             <element signature="e#39633#40140#0" expanded="false" />
             <element signature="e#40232#42225#0" expanded="false" />
