@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
-import sys, time, spidev, pigpio, csv, string, datetime
+import sys, time, pigpio, csv, string, datetime
 from PyQt4 import QtCore, QtGui, uic
 from PyQt4.Qt import Qt
 from PyQt4.QtGui import *
 import RPi.GPIO as GPIO
 from PyQt4.QtCore import pyqtSlot, QObject, SIGNAL
 import numpy as np
-import serial.rs485
 #-----------------owen protocol-------------------------
 from TOwen import Owen
 from TSystem import MySerial
@@ -52,17 +51,17 @@ def s_log(a):
 
 try:
     COM = MySerial.ComPort('/dev/ttyUSB0', 57600,
-                           timeout=0.5)  # открываем COM12 (нумерация портов начинается с 0)
+                           timeout=0.05)
 except:
     raise Exception('Error openning port!')
     #s_log(u'Error openning port!')
 
 try:
-    owenDev = Owen.OwenDevice(COM, 16)
-    print owenDev
+    MVA = Owen.OwenDevice(COM, 16)
+    print MVA
 except Owen.OwenProtocolError:
-    print 'bad! fucking owen keeps silence'
-    s_log(u'bad! fucking owen keeps silence')
+    print u'Модуль отсутствует'
+    s_log(u'Модуль отсутствует')
 
 # --------------temp measure-----------------------
 class TempThread(QtCore.QThread):  # работа с АЦП в потоке
@@ -83,11 +82,13 @@ class TempThread(QtCore.QThread):  # работа с АЦП в потоке
     def run(self):
         while self.isRun:
             a = datetime.datetime.now()
+            s = time.localtime()
             Ch = 1
             while Ch <= 6:
                 try:
+                    terr = self.temp_array[Ch][0]
                     # читаем с адреса базовый-1
-                    result = owenDev.GetIEEE32('rEAd', Ch-1, withTime=True)
+                    result = MVA.GetIEEE32('rEAd', Ch-1, withTime=True)
                     print 'Ch', Ch, 'res:', result
                     self.temp_array[Ch][0] = round(result['value'],1)
                     self.temp_array[Ch][1] = int(0)
@@ -95,38 +96,47 @@ class TempThread(QtCore.QThread):  # работа с АЦП в потоке
                     # обрабатываем ошибку раскодировки данных
                     if len(e.data) == 1:
                         self.temp_array[Ch][1] = int(1)
-                        self.temp_array[Ch][0] = 0
+                        self.temp_array[Ch][0] = terr
                         # это код ошибки
                         if ord(e.data[0]) == 0xfd:
                             print u'Обрыв датчика'
-                            s_log(u'Обрыв датчика, канал: ' + str(Ch))
+                            s_log(u'Обрыв датчика, канал: ' + str(Ch) + ' ' + str(s.tm_hour) + ':' + str(
+                                s.tm_min) + ':' + str(s.tm_sec))
                         elif ord(e.data[0]) == 0xff:
                             print u'Некорректный калибровочный коэффициент'
-                            s_log(u'Некорректный калибровочный коэффициент, канал: ' + str(Ch))
+                            s_log(u'Некорректный калибровочный коэффициент, канал: ' + str(Ch) + ' ' + str(
+                                s.tm_hour) + ':' + str(s.tm_min) + ':' + str(s.tm_sec))
                         elif ord(e.data[0]) == 0xfb:
                             print u'Измеренное значение слишком мало'
-                            s_log(u'Измеренное значение слишком мало, канал: ' + str(Ch))
+                            s_log(u'Измеренное значение слишком мало, канал: ' + str(Ch) + ' ' + str(
+                                s.tm_hour) + ':' + str(s.tm_min) + ':' + str(s.tm_sec))
                         elif ord(e.data[0]) == 0xfa:
                             print u'Измеренное значение слишком велико'
-                            s_log(u'Измеренное значение слишком велико, канал: ' + str(Ch))
+                            s_log(u'Измеренное значение слишком велико, канал: ' + str(Ch) + ' ' + str(
+                                s.tm_hour) + ':' + str(s.tm_min) + ':' + str(s.tm_sec))
                         elif ord(e.data[0]) == 0xf7:
                             print u'Датчик отключен'
-                            s_log(u'Датчик отключен, канал: ' + str(Ch))
+                            s_log(u'Датчик отключен, канал: ' + str(Ch) + ' ' + str(
+                                s.tm_hour) + ':' + str(s.tm_min) + ':' + str(s.tm_sec))
                         elif ord(e.data[0]) == 0xf6:
-                            print u'Данные не готовы'
-                            s_log(u'Данные не готовы ' + str(Ch))
+                            print u'Данные температуры не готовы'
+                            s_log(u'Данные температуры не готовы ' + str(Ch) + ' ' + str(
+                                s.tm_hour) + ':' + str(s.tm_min) + ':' + str(s.tm_sec))
                         elif ord(e.data[0]) == 0xf0:
                             print u'Значение заведомо неверно'
-                            s_log(u'Значение заведомо неверно, канал: ' + str(Ch))
+                            s_log(u'Значение заведомо неверно, канал: ' + str(Ch) + ' ' + str(
+                                s.tm_hour) + ':' + str(s.tm_min) + ':' + str(s.tm_sec))
                     else:
                         print 'wtf it needs?'
-                        s_log(u'Порт отвалился, канал: ' + str(Ch))
+                        s_log(u'Неизвестная ошибка ввода, канал: ' + str(Ch) + ' ' + str(
+                                s.tm_hour) + ':' + str(s.tm_min) + ':' + str(s.tm_sec))
                         if COM.isOpen():
                             COM.close()
                             COM.open()
                 except Owen.OwenProtocolError:
-                    print '2wtf it needs?'
-                    s_log(u'Порт отвалился, канал: ' + str(Ch))
+                    print u'Модуль ввода не ответил, канал: ' + str(Ch)
+                    s_log(u'Модуль ввода не ответил, канал: ' + str(Ch) + ' ' + str(
+                                s.tm_hour) + ':' + str(s.tm_min) + ':' + str(s.tm_sec))
                     self.counter += 1
                     #COM.flushInput()
                     if COM.isOpen():
@@ -135,14 +145,13 @@ class TempThread(QtCore.QThread):  # работа с АЦП в потоке
 
                 print self.temp_array[Ch]
                 Ch+=1
-            s = time.localtime()
             print '-------------------',str(s.tm_hour), ':', str(s.tm_min), ':', str(s.tm_sec), '-------------------'
             self.temp_signal.emit(self.temp_array)
-            sleepparam = float(str(datetime.datetime.now() - a)[-6:]) / 1000000
             self.counter2 +=1
             eline = u'Ошибки = ' + str(self.counter) + u', ' + u'Вызовы = ' + str(self.counter2)
             error_buffer[0] = eline
             print error_buffer[0]
+            sleepparam = float(str(datetime.datetime.now() - a)[-6:]) / 1000000
             print '-------------------', sleepparam, '-------------------'
             time.sleep(1 - sleepparam)
 
@@ -1139,23 +1148,26 @@ def call_board_ini():
     pi.set_PWM_dutycycle(SSRPwm1, 0)  # после выхода и нового запуска кода
 
     # создаем последовательный порт
-    it=True
+    it = True
+    counter = 0
     while it:
         try:
-            devName = owenDev.GetDeviceName()
+            devName = MVA.GetDeviceName()
             _name = u'Модуль ввода: {}'.format(devName)
             #s_log(_name)
             print _name
             #Прошивка
-            result = owenDev.GetFirmwareVersion()
+            result = MVA.GetFirmwareVersion()
             _firm = u'Версия ПО: {}'.format(result)
             s_log(_name + ' ' + _firm)
             print _firm
             it = False
             print error_buffer
         except Owen.OwenProtocolError:
-            print 'ffff owen'
-            s_log(u'Порт отвалился на чтении Модуля ввода')
+            counter += 1
+            print(u'Модуль ввода недоступен ' + str(counter) + ' ' + u'раз')
+            s_log(u'Модуль ввода недоступен ' + str(counter) + ' ' + u'раз')
+            if counter > 9: it = False
             if COM.isOpen():
                 COM.close()
                 COM.open()

@@ -5,7 +5,7 @@ import time
 #класс последовательного порта с логированием данных
 class ComPort(serial.Serial):
     def __init__(self, port=None, baudrate=57600, bytesize=8, parity='N', stopbits=1, timeout=None, xonxoff=0, \
-                 rtscts=0, writeTimeout=0.02, dsrdtr=None):
+                 rtscts=0, writeTimeout=0.05, dsrdtr=None):
         serial.Serial.__init__(self, port, baudrate, bytesize, parity, stopbits, timeout, xonxoff, rtscts, \
                                    writeTimeout, dsrdtr)                        
         self.LoggingIsOn=False;
