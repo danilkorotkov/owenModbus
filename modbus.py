@@ -37,21 +37,6 @@ temp_array = np.array([[0.0, 0],
                         [0.0, 0],
                         [0.0, 0]])
 
-# while True:
-#     try:
-#         temperature = instrument.read_register(1, functioncode=3, signed=True, numberOfDecimals=1) # Registernumber, number of decimals
-#         t2 = instrument.read_registers(1+6*5, numberOfRegisters = 2)
-#         t3 = instrument.read_registers(1 + 6 * 2, numberOfRegisters=2)
-#     except IOError:
-#         error += 1
-#     print 'error', error
-#     counter += 1
-#     print 'counter', counter
-#     print 't= ', temperature
-#     print 't2= ', signme(t2[0])/10, t2[1]
-#     print 't3= ', signme(t3[0])/10, t3[1]
-#     time.sleep(1)
-
 while True:
     a = datetime.datetime.now()
     s = time.localtime()
@@ -118,7 +103,6 @@ while True:
         #print temp_array[Ch]
         Ch += 1
     print '-------------------', str(s.tm_hour), ':', str(s.tm_min), ':', str(s.tm_sec), '-------------------'
-    #self.temp_signal.emit(self.temp_array)
     counter2 += 1
     eline = u'Ошибки = ' + str(counter) + u', ' + u'Вызовы = ' + str(counter2)
     error_buffer[0] = eline

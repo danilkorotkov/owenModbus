@@ -50,11 +50,9 @@ def s_log(a):
     error_buffer.pop(1)
 
 try:
-    COM = MySerial.ComPort('/dev/ttyUSB0', 57600,
-                           timeout=0.05)
+    COM = MySerial.ComPort('/dev/ttyUSB0', 57600, timeout=0.05)
 except:
     raise Exception('Error openning port!')
-    #s_log(u'Error openning port!')
 
 try:
     MVA = Owen.OwenDevice(COM, 16)
@@ -69,8 +67,8 @@ class TempThread(QtCore.QThread):  # работа с АЦП в потоке
         super(TempThread, self).__init__(parent)
         self.temp_signal = temp_signal
         self.isRun = False
-        self.counter=0
-        self.counter2=0
+        self.counter=0 # ошибки
+        self.counter2=0 # операции чтения
         self.temp_array = np.array([[0.0, 0],
                                    [0.0, 0],
                                    [0.0, 0],
@@ -93,63 +91,33 @@ class TempThread(QtCore.QThread):  # работа с АЦП в потоке
                     self.temp_array[Ch][0] = round(result['value'],1)
                     self.temp_array[Ch][1] = int(0)
                 except Owen.OwenUnpackError as e:
-                    # обрабатываем ошибку раскодировки данных
-                    if len(e.data) == 1:
-                        self.temp_array[Ch][1] = int(1)
-                        self.temp_array[Ch][0] = terr
-                        # это код ошибки
-                        if ord(e.data[0]) == 0xfd:
-                            print u'Обрыв датчика'
-                            s_log(u'Обрыв датчика, канал: ' + str(Ch) + ' ' + str(s.tm_hour) + ':' + str(
-                                s.tm_min) + ':' + str(s.tm_sec))
-                        elif ord(e.data[0]) == 0xff:
-                            print u'Некорректный калибровочный коэффициент'
-                            s_log(u'Некорректный калибровочный коэффициент, канал: ' + str(Ch) + ' ' + str(
-                                s.tm_hour) + ':' + str(s.tm_min) + ':' + str(s.tm_sec))
-                        elif ord(e.data[0]) == 0xfb:
-                            print u'Измеренное значение слишком мало'
-                            s_log(u'Измеренное значение слишком мало, канал: ' + str(Ch) + ' ' + str(
-                                s.tm_hour) + ':' + str(s.tm_min) + ':' + str(s.tm_sec))
-                        elif ord(e.data[0]) == 0xfa:
-                            print u'Измеренное значение слишком велико'
-                            s_log(u'Измеренное значение слишком велико, канал: ' + str(Ch) + ' ' + str(
-                                s.tm_hour) + ':' + str(s.tm_min) + ':' + str(s.tm_sec))
-                        elif ord(e.data[0]) == 0xf7:
-                            print u'Датчик отключен'
-                            s_log(u'Датчик отключен, канал: ' + str(Ch) + ' ' + str(
-                                s.tm_hour) + ':' + str(s.tm_min) + ':' + str(s.tm_sec))
-                        elif ord(e.data[0]) == 0xf6:
-                            print u'Данные температуры не готовы'
-                            s_log(u'Данные температуры не готовы ' + str(Ch) + ' ' + str(
-                                s.tm_hour) + ':' + str(s.tm_min) + ':' + str(s.tm_sec))
-                        elif ord(e.data[0]) == 0xf0:
-                            print u'Значение заведомо неверно'
-                            s_log(u'Значение заведомо неверно, канал: ' + str(Ch) + ' ' + str(
-                                s.tm_hour) + ':' + str(s.tm_min) + ':' + str(s.tm_sec))
-                    else:
-                        print 'wtf it needs?'
-                        s_log(u'Неизвестная ошибка ввода, канал: ' + str(Ch) + ' ' + str(
-                                s.tm_hour) + ':' + str(s.tm_min) + ':' + str(s.tm_sec))
+                    self.error_unpack(e, terr, Ch, s) # обрабатываем ошибку раскодировки данных
+                except Owen.OwenProtocolError:
+                    try: # пробуем еще раз
+                        terr = self.temp_array[Ch][0]
+                        # читаем с адреса базовый-1
+                        result = MVA.GetIEEE32('rEAd', Ch - 1, withTime=True)
+                        print 'Ch', Ch, 'res:', result
+                        self.temp_array[Ch][0] = round(result['value'], 1)
+                        self.temp_array[Ch][1] = int(0)
+                    except Owen.OwenUnpackError as e:
+                        self.error_unpack(e, terr, Ch, s)  # обрабатываем ошибку раскодировки данных
+                    except Owen.OwenProtocolError:
+                        print u'Модуль ввода не ответил, канал: ' + str(Ch)
+                        s_log(u'Модуль ввода не ответил, канал: ' + str(Ch) + ' ' + str(
+                                    s.tm_hour) + ':' + str(s.tm_min) + ':' + str(s.tm_sec))
+                        self.counter += 1
                         if COM.isOpen():
                             COM.close()
                             COM.open()
-                except Owen.OwenProtocolError:
-                    print u'Модуль ввода не ответил, канал: ' + str(Ch)
-                    s_log(u'Модуль ввода не ответил, канал: ' + str(Ch) + ' ' + str(
-                                s.tm_hour) + ':' + str(s.tm_min) + ':' + str(s.tm_sec))
-                    self.counter += 1
-                    #COM.flushInput()
-                    if COM.isOpen():
-                        COM.close()
-                        COM.open()
 
                 print self.temp_array[Ch]
                 Ch+=1
+
             print '-------------------',str(s.tm_hour), ':', str(s.tm_min), ':', str(s.tm_sec), '-------------------'
             self.temp_signal.emit(self.temp_array)
             self.counter2 +=1
-            eline = u'Ошибки = ' + str(self.counter) + u', ' + u'Вызовы = ' + str(self.counter2)
-            error_buffer[0] = eline
+            error_buffer[0] = u'Ошибки = ' + str(self.counter) + u', ' + u'Вызовы = ' + str(self.counter2)
             print error_buffer[0]
             sleepparam = float(str(datetime.datetime.now() - a)[-6:]) / 1000000
             print '-------------------', sleepparam, '-------------------'
@@ -157,6 +125,47 @@ class TempThread(QtCore.QThread):  # работа с АЦП в потоке
 
     def stop(self):
         self.isRun = False
+
+    def error_unpack(self, e, terr, Ch, s):
+        if len(e.data) == 1:
+            self.temp_array[Ch][1] = int(1)
+            self.temp_array[Ch][0] = terr
+            # это код ошибки
+            if ord(e.data[0]) == 0xfd:
+                print u'Обрыв датчика'
+                s_log(u'Обрыв датчика, канал: ' + str(Ch) + ' ' + str(s.tm_hour) + ':' + str(
+                    s.tm_min) + ':' + str(s.tm_sec))
+            elif ord(e.data[0]) == 0xff:
+                print u'Некорректный калибровочный коэффициент'
+                s_log(u'Некорректный калибровочный коэффициент, канал: ' + str(Ch) + ' ' + str(
+                    s.tm_hour) + ':' + str(s.tm_min) + ':' + str(s.tm_sec))
+            elif ord(e.data[0]) == 0xfb:
+                print u'Измеренное значение слишком мало'
+                s_log(u'Измеренное значение слишком мало, канал: ' + str(Ch) + ' ' + str(
+                    s.tm_hour) + ':' + str(s.tm_min) + ':' + str(s.tm_sec))
+            elif ord(e.data[0]) == 0xfa:
+                print u'Измеренное значение слишком велико'
+                s_log(u'Измеренное значение слишком велико, канал: ' + str(Ch) + ' ' + str(
+                    s.tm_hour) + ':' + str(s.tm_min) + ':' + str(s.tm_sec))
+            elif ord(e.data[0]) == 0xf7:
+                print u'Датчик отключен'
+                s_log(u'Датчик отключен, канал: ' + str(Ch) + ' ' + str(
+                    s.tm_hour) + ':' + str(s.tm_min) + ':' + str(s.tm_sec))
+            elif ord(e.data[0]) == 0xf6:
+                print u'Данные температуры не готовы'
+                s_log(u'Данные температуры не готовы ' + str(Ch) + ' ' + str(
+                    s.tm_hour) + ':' + str(s.tm_min) + ':' + str(s.tm_sec))
+            elif ord(e.data[0]) == 0xf0:
+                print u'Значение заведомо неверно'
+                s_log(u'Значение заведомо неверно, канал: ' + str(Ch) + ' ' + str(
+                    s.tm_hour) + ':' + str(s.tm_min) + ':' + str(s.tm_sec))
+        else:
+            print 'wtf it needs?'
+            s_log(u'Неизвестная ошибка ввода, канал: ' + str(Ch) + ' ' + str(
+                s.tm_hour) + ':' + str(s.tm_min) + ':' + str(s.tm_sec))
+            if COM.isOpen():
+                COM.close()
+                COM.open()
 
 # -------------app window--------------------------
 # -------------------------------------------------
@@ -188,9 +197,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     iconUnlock = QtGui.QIcon()
     MTemp1 = 0.0  # храним вычисленное значение температуры
     MTemp2 = 0.0
-    WaitText = "ГОТОВ К ЗАПУСКУ"
-    WorkText = "НАГРЕВ "
-    DelayText = "ВЫДЕРЖКА "
+    WaitText = 'ГОТОВ К ЗАПУСКУ'
+    WorkText = 'НАГРЕВ '
+    DelayText = 'ВЫДЕРЖКА '
     coldStart1 = 0  # коррекция скорости при отключении датчиков
     coldStart2 = 0
     coldStart = 0  # запуск программы после загрузки
@@ -282,7 +291,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     # ----------------------------methods------------------------------
     def time_msg(self, out):
-        self.labeloftime.setText(_translate("Calibrator","<html><head/><body><p align=\"center\"><span style=\" font-size:16pt; font-weight:400;\">%s</span></p><p align=\"center\"><span style=\" font-size:26pt; font-weight:400;\">%s</span></p><p align=\"center\"><span style=\" font-size:16pt; font-weight:400;\">%s</span></p></body></html>" % (out[0], out[1], out[2]), None))
+        self.labeloftime.setText(
+            _translate(
+                "Calibrator",
+                "<html><head/><body><p align=\"center\"><span style=\" font-size:16pt; font-weight:400;\">%s</span></p>"
+                "<p align=\"center\"><span style=\" font-size:26pt; font-weight:400;\">%s</span></p>"
+                "<p align=\"center\"><span style=\" font-size:16pt; font-weight:400;\">%s</span></p>"
+                "</body></html>" % (out[0], out[1], out[2]), None))
         if self.coldStart == 1:
             self.ShowResults(self.Tarray)
         self.ErrorPanel.setHtml(metrocss.Show_err(error_buffer))
@@ -1162,7 +1177,6 @@ def call_board_ini():
             s_log(_name + ' ' + _firm)
             print _firm
             it = False
-            print error_buffer
         except Owen.OwenProtocolError:
             counter += 1
             print(u'Модуль ввода недоступен ' + str(counter) + ' ' + u'раз')
