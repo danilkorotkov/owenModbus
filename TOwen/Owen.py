@@ -235,6 +235,9 @@ class OwenProtocol:#Класс, реализующий протокол ОВЕН
     def packInt16(self,value):#упаковываем целое число для передачи на устройство
         self.data = struct.pack('>H',value)
 
+    def packFloat24(self,value):#упаковываем число с плавающей точкой для передачи на устройство
+        self.data = struct.pack('>f',value)[:-1]
+
     def packString(self,value):        
         self.data = value[::-1]
 
@@ -481,7 +484,7 @@ class OwenDevice:
     def ReadFromPort(self):#чтение ответа из порта
         self.owenProtocol.frameAscii=''
         if self.serialPort!=None: 
-            (flag,charsFromPort)=self.serialPort.read(self.owenProtocol.waitBytes)
+            (flag, charsFromPort)=self.serialPort.read(self.owenProtocol.waitBytes)
             if not flag:
                 raise OwenProtocolError('OwenDevice::Error occured when recieving data from serial port!')
             if charsFromPort=='':
@@ -498,28 +501,37 @@ class OwenDevice:
             hash = hashOrName
         return hash
         
-    def GetPingPong(self,hash,addrOffset=0,answerDataSize = -1): #отправка фрейма запроса , получение ответа, addrOffset - смещение относительно базового адреса, answerDataSize - сколько байт данных ждем от устройства
+    def GetPingPong(self, hash, addrOffset=0, answerDataSize = -1):
+        """
+        отправка фрейма запроса , получение ответа,
+        addrOffset - смещение относительно базового адреса,
+        answerDataSize - сколько байт данных ждем от устройства
+        """
         self.owenProtocol.address=self.baseAddress+addrOffset
-        self.owenProtocol.data = ''        
+        self.owenProtocol.data = ''
         self.PackFrame2Ascii(hash,True)
         self.WriteToPort()
         self.owenProtocol.CalcAnswerBytes(answerDataSize)
         self.ReadFromPort()
         frameAsciiRecvSize=len(self.owenProtocol.frameAscii)
-        self.DebugMessage( 'Reading::Length: {1} Recieved: {0}'.format(self.owenProtocol.frameAscii,frameAsciiRecvSize))                    
+        self.DebugMessage( 'Reading::Length: {1} Recieved: {0}'.format(self.owenProtocol.frameAscii,frameAsciiRecvSize))
         if frameAsciiRecvSize>0:
             self.owenProtocol.unpackAsciiFrame();
             self.owenProtocol.unpackFrame();
             self.DebugMessage('Reading::data size: {0}'.format(self.owenProtocol.dataSize))
             self.DebugMessage('Reading::data: {0}'.format(list(self.owenProtocol.data)))
             #ошибки
-            if answerDataSize>0 and not self.owenProtocol.dataSize == answerDataSize: 
+            if answerDataSize>0 and not self.owenProtocol.dataSize == answerDataSize:
                 return False # не совпало количество принятых данных с желаемой длиной
         else:
             raise OwenNewtworkError('OwenDevice::no answer from device when reading data!')
         return True
-        
-    def GetInt16(self,hashOrName,addrOffset = 0, withTime = False, withIndex = False):#возвращает целочисленный параметр по хэшу или имени, addrOffset - смещение относительно базового адреса
+
+    def GetInt16(self,hashOrName,addrOffset = 0, withTime = False, withIndex = False):
+        """
+        возвращает целочисленный параметр по хэшу или имени,
+        addrOffset - смещение относительно базового адреса
+        """
         hash = self.TakeHashFrom(hashOrName)
         if self.serialPort == None:
             self.TestResponseString = self.__TestResponseStringForIEEE32        
@@ -531,7 +543,11 @@ class OwenDevice:
         else:
             raise OwenProtocolError('OwenDevice::data size mismatch!')
 
-    def GetChar(self,hashOrName,addrOffset=0, withTime = False, withIndex = False):#возвращает байт со знаком параметр по хэшу или имени,, addrOffset - смещение относительно базового адреса
+    def GetChar(self,hashOrName,addrOffset=0, withTime = False, withIndex = False):
+        """
+        возвращает байт со знаком параметр по хэшу или имени,
+        addrOffset - смещение относительно базового адреса
+        """
         hash = self.TakeHashFrom(hashOrName)
         if self.serialPort == None:
             self.TestResponseString = self.__TestResponseStringForIEEE32        
@@ -543,7 +559,11 @@ class OwenDevice:
         else:
             raise OwenProtocolError('OwenDevice::data size mismatch!')  
                         
-    def GetIEEE32(self, hashOrName, addrOffset = 0, withTime = False, withIndex = False):#возвращает параметр float32 и время по хэшу  или имени,, addrOffset - смещение относительно базового адреса
+    def GetIEEE32(self, hashOrName, addrOffset = 0, withTime = False, withIndex = False):
+        """
+        возвращает параметр float32 и время по хэшу  или имени,
+        addrOffset - смещение относительно базового адреса
+        """
         hash = self.TakeHashFrom(hashOrName)        
         if self.serialPort == None:
             self.TestResponseString = self.__TestResponseStringForIEEE32          
@@ -558,9 +578,32 @@ class OwenDevice:
             return self.owenProtocol.unpackIEEE32(withIndex,withTime)
         else:
             return self.owenProtocol.unpackIEEE32(withIndex,withTime)['value']
-                
+
+    def GetFloat24(self, hashOrName, addrOffset = 0, withTime = False, withIndex = False):
+        """
+        возвращает параметр float24 и время по хэшу  или имени,
+        addrOffset - смещение относительно базового адреса
+        """
+        hash = self.TakeHashFrom(hashOrName)
+        #if self.serialPort == None:
+        #    self.TestResponseString = self.__TestResponseStringForIEEE32
+        answerLength = 4
+        if withTime:
+            answerLength += 2
+        if withIndex:
+            answerLength += 2
+        result = self.GetPingPong(hash,addrOffset,answerLength) # для скорости задаём число принимаемых байтов
+        #result = self.GetPingPong(hash,addrOffset)
+        if withTime or withIndex:
+            return self.owenProtocol.unpackFloat24(withIndex, withTime)
+        else:
+            return self.owenProtocol.unpackFloat24(withIndex, withTime)['value']
         
-    def GetString(self,hashOrName,addrOffset=0, withTime = False, withIndex = False):#возвращает строку по хэшу или имени,, addrOffset - смещение относительно базового адреса
+    def GetString(self,hashOrName,addrOffset=0, withTime = False, withIndex = False):
+        """
+        возвращает строку по хэшу или имени,
+        addrOffset - смещение относительно базового адреса
+        """
         hash = self.TakeHashFrom(hashOrName)
         if self.serialPort == None:
             self.TestResponseString = self.__TestResponseStringForStringType        
