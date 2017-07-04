@@ -38,10 +38,16 @@ pwmPeriodReg = 32
 SSRPwm1 = 1
 SSRPwm0 = 0 #owen MU offset
 
+portTuple = ('ТТР линии 6.5', 'ТТР линии 3.5',
+             'Вентилятор  линии 6.5', 'Вентилятор  линии 3.5',
+             'Контактор  линии 6.5', 'Контактор  линии 3.5')
+
 Freq = 5 #pwm period
 sets = {}
 FI = 300 # fan interval, s
 FT = 15  #fan active time, s
+
+portIsBusy = False
 
 error_buffer = ['','','','','']
 def s_log(a):
@@ -109,15 +115,13 @@ except ValueError or TypeError or IOError:
     except ValueError or TypeError or IOError:
         print u'Ошибка установки портов'
         s_log(u'Ошибка установки портов')
-        
+
 # --------------temp measure-----------------------
 class TempThread(QtCore.QThread):  # работа с АЦП в потоке
     def __init__(self, temp_signal, parent=None):
         super(TempThread, self).__init__(parent)
         self.temp_signal = temp_signal
         self.isRun = False
-        self.pwm0 = 0 #скважность ШИМ 0..1.0
-        self.pwm1 = 0
         self.counter=0 # ошибки
         self.counter2=0 # операции чтения
         self.temp_array = np.array([[0.0, 0],
@@ -129,12 +133,17 @@ class TempThread(QtCore.QThread):  # работа с АЦП в потоке
                                    [0.0, 0]])
 
     def run(self):
+        global portIsBusy
         while self.isRun:
             a = datetime.datetime.now()
             s = time.localtime()
             Ch = 1
+            while portIsBusy:
+                print 'temp busy', portIsBusy
+                time.sleep(0.05)
             while Ch <= 6:
                 try:
+                    portIsBusy = True
                     terr = self.temp_array[Ch][0]
                     # читаем с адреса базовый-1
                     result = MVA.GetIEEE32('rEAd', Ch-1, withTime=True)
@@ -164,7 +173,7 @@ class TempThread(QtCore.QThread):  # работа с АЦП в потоке
 
                 print self.temp_array[Ch]
                 Ch+=1
-
+            portIsBusy = False
             print '-------------------',str(s.tm_hour), ':', str(s.tm_min), ':', str(s.tm_sec), '-------------------'
             self.temp_signal.emit(self.temp_array)
             self.counter2 +=1
@@ -172,7 +181,7 @@ class TempThread(QtCore.QThread):  # работа с АЦП в потоке
             print error_buffer[0]
             sleepparam = float(str(datetime.datetime.now() - a)[-6:]) / 1000000
             print '-------------------', sleepparam, '-------------------'
-            time.sleep(1 - sleepparam)
+            time.sleep(5 - sleepparam)
 
     def stop(self):
         self.isRun = False
@@ -341,6 +350,29 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
 
     # ----------------------------methods------------------------------
+    def pwmSet(self, port, value):
+        '''
+        управляем включением внешних устройств (ШИМ или просто вкл/выкл)
+        :param port: имя порта, к примеру Fan1
+        :param value: 0.0-1.0
+        :return:
+        '''
+        global portIsBusy
+        while portIsBusy:
+            print 'pwm busy', portIsBusy
+            time.sleep(0.05)
+        portIsBusy = True
+        try:
+            print 'r.OE '+ portTuple[port], MU.writeFloat24('r.OE', port, value)
+        except Owen.OwenProtocolError:
+            try:
+                print 'r.OE ' + portTuple[port], MU.writeFloat24('r.OE', port, value)
+            except Owen.OwenProtocolError:
+                print u'Ошибка установки состояния порта ', portTuple[port]
+                s_log(u'Ошибка установки состояния порта ', portTuple[port])
+        portIsBusy = False
+
+
     def time_msg(self, out):
         self.labeloftime.setText(
             _translate(
@@ -388,14 +420,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.startTime1 = datetime.datetime.now()
             self.justStarted1 = 1
             self.State1 = 0
-            GPIO.output(Cont1, 1)
+            self.pwmSet(Cont1, 1)
             file_name_1 = str(int(time.time())) + '_1_' + str(self.T1) + '.txt'
 
         if self.justStarted2 == 0 and self.Line_35:
             self.startTime2 = datetime.datetime.now()
             self.justStarted2 = 1
             self.State2 = 0
-            GPIO.output(Cont2, 1)
+            self.pwmSet(Cont2, 1)
             file_name_2 = str(int(time.time())) + '_2_' + str(self.T2) + '.txt'
 
         if self.Line_65 == 1:
@@ -404,28 +436,28 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 delta1 = str(datetime.datetime.now() - self.startTime1)[:7]
                 # ----проверяем границы температура относительно уставки
                 if self.MTemp1 < (self.T1 - 15):
-                    self.tempthread.pwm0 = self.level[4]
+                    self.pwmSet(SSRPwm0, self.level[4])
                     i = self.level[4] * 100
                     self.InfoPanel1.setHtml(metrocss.SetInfoPanelText(self.WorkText + delta1 + " " + str(i) + "%"))
 
                 elif (self.T1 - 15) <= self.MTemp1 < self.T1:
                     if self.deltaTRate1 >= 5:
-                        self.tempthread.pwm0 = self.level[0]
+                        self.pwmSet(SSRPwm0, self.level[0])
                         i = self.level[0]  * 100
                     elif 3 <= self.deltaTRate1 < 5:
-                        self.tempthread.pwm0 = self.level[1]
+                        self.pwmSet(SSRPwm0, self.level[1])
                         i = self.level[1] * 100
                     elif 1 <= self.deltaTRate1 < 3:
-                        self.tempthread.pwm0 = self.level[2]
+                        self.pwmSet(SSRPwm0, self.level[2])
                         i = self.level[2] * 100
                     elif self.deltaTRate1 < 1:
-                        self.tempthread.pwm0 = self.level[4]
+                        self.pwmSet(SSRPwm0, self.level[4])
                         i = self.level[4] * 100
 
                     self.InfoPanel1.setHtml(metrocss.SetInfoPanelText(self.WorkText + delta1 + " " + str(i) + "%"))
                 # ----уходим на выдержку-------------------------
                 elif self.MTemp1 >= self.T1:
-                    self.tempthread.pwm0 = self.level[0]
+                    self.pwmSet(SSRPwm0, self.level[0])
                     self.State1 = 1
                     self.startTime1 = datetime.datetime.now()
                     self.countdown1 = datetime.timedelta(minutes=self.t1)
@@ -441,19 +473,19 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     delta1 = str((self.countdown1 - delta1))[:7]
 
                     if self.MTemp1 >= self.T1:
-                        self.tempthread.pwm0 = self.level[0]
+                        self.pwmSet(SSRPwm0, self.level[0])
                         i = self.level[0] * 100
                     elif (self.T1 - 1) <= self.MTemp1 < self.T1:
-                        self.tempthread.pwm0 = self.level[1]
+                        self.pwmSet(SSRPwm0, self.level[1])
                         i = self.level[1] * 100
                     elif (self.T1 - 2) <= self.MTemp1 < (self.T1 - 1):
-                        self.tempthread.pwm0 = self.level[2]
+                        self.pwmSet(SSRPwm0, self.level[2])
                         i = self.level[2] * 100
                     elif (self.T1 - 4) <= self.MTemp1 < (self.T1 - 2):
-                        self.tempthread.pwm0 = self.level[3]
+                        self.pwmSet(SSRPwm0, self.level[3])
                         i = self.level[3] * 100
                     elif (self.T1 - 4) > self.MTemp1:
-                        self.tempthread.pwm0 = self.level[4]
+                        self.pwmSet(SSRPwm0, self.level[4])
                         i = self.level[4] * 100
                     self.InfoPanel1.setHtml(metrocss.SetInfoPanelText(self.DelayText + delta1 + " " + str(i) + "%"))
 
@@ -464,10 +496,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     self.setWorkzonePassive('1')
                     self.Line_65 = 0
                     self.InfoPanel1.setHtml(metrocss.SetInfoPanelText(self.WaitText))
-                    self.tempthread.pwm0 = self.level[0]
+                    self.pwmSet(SSRPwm0, self.level[0])
                     self.State1 = 0
                     self.justStarted1 = 0
-                    GPIO.output(Cont1, 0)
+                    self.pwmSet(Cont1, 0)
             save_log(file_name_1, self.MTemp1, i, self.State1, self.Fan1_On, self.Heater1)
 
         if self.Line_35 == 1:
@@ -476,28 +508,28 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 delta2 = str(datetime.datetime.now() - self.startTime2)[:7]
                 # ----проверяем границы температура относительно уставки
                 if self.MTemp2 < (self.T2 - 15):
-                    self.tempthread.pwm1 = self.level[4]
+                    self.pwmSet(SSRPwm1, self.level[4])
                     p = self.level[4] * 100
                     self.InfoPanel2.setHtml(metrocss.SetInfoPanelText(self.WorkText + delta2 + " " + str(p) + "%"))
 
                 elif (self.T2 - 15) <= self.MTemp2 < self.T2:
                     if self.deltaTRate2 >= 5:
-                        self.tempthread.pwm1 = self.level[0]
+                        self.pwmSet(SSRPwm1, self.level[0])
                         p = self.level[0] * 100
                     elif 3 <= self.deltaTRate2 < 5:
-                        self.tempthread.pwm1 = self.level[1]
+                        self.pwmSet(SSRPwm1, self.level[1])
                         p = self.level[1] * 100
                     elif 1 <= self.deltaTRate2 < 3:
-                        self.tempthread.pwm1 = self.level[2]
+                        self.pwmSet(SSRPwm1, self.level[2])
                         p = self.level[2] * 100
                     elif self.deltaTRate2 < 1:
-                        self.tempthread.pwm1 = self.level[4]
+                        self.pwmSet(SSRPwm1, self.level[4])
                         p = self.level[4] * 100
 
                     self.InfoPanel2.setHtml(metrocss.SetInfoPanelText(self.WorkText + delta2 + " " + str(p) + "%"))
                 # ----уходим на выдержку-------------------------
                 elif self.MTemp2 >= self.T2:
-                    self.tempthread.pwm1 = self.level[0]
+                    self.pwmSet(SSRPwm1, self.level[0])
                     self.State2 = 1
                     self.startTime2 = datetime.datetime.now()
                     self.countdown2 = datetime.timedelta(minutes=self.t2)
@@ -513,19 +545,19 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     delta2 = str((self.countdown2 - delta2))[:7]
 
                     if self.MTemp2 >= self.T2:
-                        self.tempthread.pwm1 = self.level[0]
+                        self.pwmSet(SSRPwm1, self.level[0])
                         p = self.level[0] * 100
                     elif (self.T2 - 1) <= self.MTemp2 < self.T2:
-                        self.tempthread.pwm1 = self.level[1]
+                        self.pwmSet(SSRPwm1, self.level[1])
                         p = self.level[1] * 100
                     elif (self.T2 - 2) <= self.MTemp2 < (self.T2 - 1):
-                        self.tempthread.pwm1 = self.level[2]
+                        self.pwmSet(SSRPwm1, self.level[2])
                         p = self.level[2] * 100
                     elif (self.T2 - 4) <= self.MTemp2 < (self.T2 - 2):
-                        self.tempthread.pwm1 = self.level[3]
+                        self.pwmSet(SSRPwm1, self.level[3])
                         p = self.level[3] * 100
                     elif (self.T2 - 4) > self.MTemp2:
-                        self.tempthread.pwm1 = self.level[4]
+                        self.pwmSet(SSRPwm1, self.level[4])
                         p = self.level[4] * 100
                     self.InfoPanel2.setHtml(metrocss.SetInfoPanelText(self.DelayText + delta2 + " " + str(p) + "%"))
 
@@ -536,10 +568,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     self.setWorkzonePassive('2')
                     self.Line_35 = 0
                     self.InfoPanel2.setHtml(metrocss.SetInfoPanelText(self.WaitText))
-                    self.tempthread.pwm1 = self.level[0]
+                    self.pwmSet(SSRPwm1, self.level[0])
                     self.State2 = 0
                     self.justStarted2 = 0
-                    GPIO.output(Cont2, 0)
+                    self.pwmSet(Cont2, 0)
             save_log(file_name_2, self.MTemp2, p, self.State2, self.Fan2_On, self.Heater2)
 
     @pyqtSlot()
@@ -583,21 +615,21 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         if Line == 1:
             if self.Fan1_On == 0:
                 self.Fan1_On = 1
-                GPIO.output(Fan1, self.Fan1_On)
+                self.pwmSet(Fan1, self.Fan1_On)
                 self.Fan1.setIcon(self.iconOn)
             else:
                 self.Fan1_On = 0
-                GPIO.output(Fan1, self.Fan1_On)
+                self.pwmSet(Fan1, self.Fan1_On)
                 self.Fan1.setIcon(self.iconOff)
 
         elif Line == 2:
             if self.Fan2_On == 0:
                 self.Fan2_On = 1
-                GPIO.output(Fan2, self.Fan2_On)
+                self.pwmSet(Fan2, self.Fan2_On)
                 self.Fan2.setIcon(self.iconOn)
             else:
                 self.Fan2_On = 0
-                GPIO.output(Fan2, self.Fan2_On)
+                self.pwmSet(Fan2, self.Fan2_On)
                 self.Fan2.setIcon(self.iconOff)
         else:
             sender = self.sender()
@@ -605,20 +637,20 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 if self.Fan1_On == 0:
                     sender.setIcon(self.iconOn)
                     self.Fan1_On = 1
-                    GPIO.output(Fan1, self.Fan1_On)
+                    self.pwmSet(Fan1, self.Fan1_On)
                 else:
                     sender.setIcon(self.iconOff)
                     self.Fan1_On = 0
-                    GPIO.output(Fan1, self.Fan1_On)
+                    self.pwmSet(Fan1, self.Fan1_On)
             else:
                 if self.Fan2_On == 0:
                     sender.setIcon(self.iconOn)
                     self.Fan2_On = 1
-                    GPIO.output(Fan2, self.Fan2_On)
+                    self.pwmSet(Fan2, self.Fan2_On)
                 else:
                     sender.setIcon(self.iconOff)
                     self.Fan2_On = 0
-                    GPIO.output(Fan2, self.Fan2_On)
+                    self.pwmSet(Fan2, self.Fan2_On)
 
     def setWorkzonePassive(self, point):  # ожидающая рабочая зона
         if point == '1':
@@ -689,11 +721,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self.setWorkzonePassive(point)
                 self.Line_65 = 0
                 self.InfoPanel1.setHtml(metrocss.SetInfoPanelText(self.WaitText))
-                pi.hardware_PWM(SSRPwm0, Freq, 0)
+                self.pwmSet(SSRPwm0, 0)
                 self.startHeat1 = 0
                 self.startDelay1 = 0
                 self.justStarted1 = 0
-                GPIO.output(Cont1, 0)
+                self.pwmSet(Cont1, 0)
 
                 self.Fan1Interval = FI
                 self.Fan1Time = FT
@@ -705,11 +737,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self.setWorkzonePassive(point)
                 self.Line_35 = 0
                 self.InfoPanel2.setHtml(metrocss.SetInfoPanelText(self.WaitText))
-                pi.hardware_PWM(SSRPwm1, Freq, 0)
+                self.pwmSet(SSRPwm1, 0)
                 self.startHeat2 = 0
                 self.startDelay2 = 0
                 self.justStarted2 = 0
-                GPIO.output(Cont2, 0)
+                self.pwmSet(Cont2, 0)
 
                 self.Fan2Interval = FI
                 self.Fan2Time = FT
