@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import  time, csv, datetime#, sys, string
+import  time, csv, datetime, minimalmodbus#, sys, string
 from PyQt4 import QtCore, QtGui, uic
 from PyQt4.Qt import Qt
 from PyQt4.QtGui import *
@@ -21,23 +21,23 @@ from timelabel import TimeThread
 MainInterfaceWindow = "metro_uic.ui"
 Ui_MainWindow, QtBaseClass = uic.loadUiType(MainInterfaceWindow)
 
-# InputWindow = "datainput.ui"
-# Ui_InputWindow, QtBaseClass = uic.loadUiType(InputWindow)
-
 # ---------------globals--------------------------------
-
+minimalmodbus.CLOSE_PORT_AFTER_EACH_CALL = True
 DEGREE = u"\u00B0" + 'C'
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 
 portName = '/dev/ttyUSB0'
 baudRate = 57600
+
 Cont1 = 4
 Cont2 = 5
 Fan2 = 3
 Fan1 = 2
-SSRPwm0 = 0 #owen offset
+pwmPeriodReg = 32
 SSRPwm1 = 1
+SSRPwm0 = 0 #owen MU offset
+
 Freq = 5 #pwm period
 sets = {}
 FI = 300 # fan interval, s
@@ -48,6 +48,68 @@ def s_log(a):
     error_buffer.append(a)
     error_buffer.pop(1)
 
+# ---------------instrument settings--------------------------------
+try:
+    COM = MySerial.ComPort(portName, baudRate, timeout=0.05)
+except:
+    raise Exception('Error openning port!')
+
+try:
+    MVA = Owen.OwenDevice(COM, 16)
+    print MVA
+except Owen.OwenProtocolError:
+    print u'Модуль ввода отсутствует'
+    s_log(u'Модуль ввода отсутствует')
+
+try:
+    MU = Owen.OwenDevice(COM, 8)
+    print MU
+except Owen.OwenProtocolError:
+    print u'Модуль вывода отсутствует'
+    s_log(u'Модуль вывода отсутствует')
+
+MMU = minimalmodbus.Instrument(portName, slaveaddress=8, mode='rtu') # port name, slave address (in decimal)
+MMU.debug = True
+MMU.serial.baudrate = baudRate
+
+try:
+    MMU.write_register(pwmPeriodReg + SSRPwm0, Freq)
+    MMU.write_register(pwmPeriodReg + SSRPwm1, Freq)
+    print u'Корректный период ШИМ'
+    s_log(u'Корректный период ШИМ')
+except ValueError or TypeError or IOError:
+    try:
+        MMU.write_register(pwmPeriodReg + SSRPwm0, Freq)
+        MMU.write_register(pwmPeriodReg + SSRPwm1, Freq)
+        print u'Корректный период ШИМ'
+        s_log(u'Корректный период ШИМ')
+    except ValueError or TypeError or IOError:
+        print u'Ошибка установки периода ШИМ'
+        s_log(u'Ошибка установки периода ШИМ')
+
+try:
+    MMU.write_register(SSRPwm0, 0)
+    MMU.write_register(SSRPwm1, 0)
+    MMU.write_register(Fan1, 0)
+    MMU.write_register(Fan2, 0)
+    MMU.write_register(Cont1, 0)
+    MMU.write_register(Cont2, 0)
+    print u'Порты в нуле'
+    s_log(u'Порты в нуле')
+except ValueError or TypeError or IOError:
+    try:
+        MMU.write_register(SSRPwm0, 0)
+        MMU.write_register(SSRPwm1, 0)
+        MMU.write_register(Fan1, 0)
+        MMU.write_register(Fan2, 0)
+        MMU.write_register(Cont1, 0)
+        MMU.write_register(Cont2, 0)
+        print u'Порты в нуле'
+        s_log(u'Порты в нуле')
+    except ValueError or TypeError or IOError:
+        print u'Ошибка установки портов'
+        s_log(u'Ошибка установки портов')
+        
 # --------------temp measure-----------------------
 class TempThread(QtCore.QThread):  # работа с АЦП в потоке
     def __init__(self, temp_signal, parent=None):
@@ -656,7 +718,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def All_is_Clear(self):  # корректное завершение
         self.tempthreadcontrol(0)
         self.timelabel.stop()
-        pi.stop()
         GPIO.cleanup()
         self.close()
 
@@ -1145,19 +1206,6 @@ def save_settings(sets):
 
 def call_board_ini():
 
-    try:
-        COM = MySerial.ComPort(portName, baudRate, timeout=0.05)
-    except:
-        raise Exception('Error openning port!')
-
-    try:
-        MVA = Owen.OwenDevice(COM, 16)
-        print MVA
-    except Owen.OwenProtocolError:
-        print u'Модуль ввода отсутствует'
-        s_log(u'Модуль ввода отсутствует')
-
-
     it = True
     counter = 0
     while it:
@@ -1180,20 +1228,13 @@ def call_board_ini():
             if COM.isOpen():
                 COM.close()
                 COM.open()
-    try:
-        MU = Owen.OwenDevice(COM, 8)
-        print MU
-    except Owen.OwenProtocolError:
-        print u'Модуль вывода отсутствует'
-        s_log(u'Модуль вывода отсутствует')
-
 
     it = True
     counter = 0
     while it:
         try:
             devName = MU.GetDeviceName()
-            _name = u'Модуль ввода: {}'.format(devName)
+            _name = u'Модуль вывода: {}'.format(devName)
             #s_log(_name)
             print _name
             #Прошивка
@@ -1219,8 +1260,6 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
-
-
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
