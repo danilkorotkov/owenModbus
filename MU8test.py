@@ -17,12 +17,14 @@ COM.LoggingIsOn=True#включаем логирование в файл
 print COM
 
 instrument = minimalmodbus.Instrument('/dev/ttyUSB0',slaveaddress=8, mode='rtu') # port name, slave address (in decimal)
-instrument.debug = True
+instrument.debug = False
 instrument.serial.baudrate = 57600
 
 
 instrument.write_register(32, 5)
-instrument.write_register(33, 1)
+instrument.write_register(33, 5)
+
+print instrument.read_registers(32,2)
 
 instrument.write_register(0, 0)
 instrument.write_register(1, 0)
@@ -40,6 +42,7 @@ print 'Device name: {}'.format(devName)
 result = owenDev.GetFirmwareVersion()
 print 'Firmware version: {}'.format(result)
 #owenDev.Debug=True#включем отладочные сообщения
+c=0
 while True:
     try:
         #print '---------------------------------'
@@ -65,6 +68,15 @@ while True:
 
         roe = (owenDev.GetFloat24('r.OE',  0), owenDev.GetFloat24('r.OE',  1))
         print 'roe=', roe[0], 'roe=', roe[1]
+
+        print 'resOfWrite=', round(owenDev.writeFloat24('r.OE', 0, value=c), 3)
+        # if c < 0.9:
+        #     c+=0.1
+        # else:
+        #     c=0
+
+        print 'addr=', owenDev.GetInt16(0x9F62, addrOffset = 0, withTime = False, withIndex = False)
+
 
         time.sleep(1)
     except Owen.OwenProtocolError:

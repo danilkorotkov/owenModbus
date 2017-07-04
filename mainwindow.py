@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import sys, time, pigpio, csv, string, datetime
+import  time, csv, datetime#, sys, string
 from PyQt4 import QtCore, QtGui, uic
 from PyQt4.Qt import Qt
 from PyQt4.QtGui import *
@@ -30,36 +30,23 @@ DEGREE = u"\u00B0" + 'C'
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 
-Cont1 = 17
-Cont2 = 27
-OEBuff = 23
-Fan2 = 24
-Fan1 = 25
-SSRPwm0 = 12
-SSRPwm1 = 13
-Freq = 2
+portName = '/dev/ttyUSB0'
+baudRate = 57600
+Cont1 = 4
+Cont2 = 5
+Fan2 = 3
+Fan1 = 2
+SSRPwm0 = 0 #owen offset
+SSRPwm1 = 1
+Freq = 5 #pwm period
 sets = {}
-FI = 300
-FT = 15
+FI = 300 # fan interval, s
+FT = 15  #fan active time, s
+
 error_buffer = ['','','','','']
-
-pi = pigpio.pi()  # Connect to local host.
-
 def s_log(a):
     error_buffer.append(a)
     error_buffer.pop(1)
-
-try:
-    COM = MySerial.ComPort('/dev/ttyUSB0', 57600, timeout=0.05)
-except:
-    raise Exception('Error openning port!')
-
-try:
-    MVA = Owen.OwenDevice(COM, 16)
-    print MVA
-except Owen.OwenProtocolError:
-    print u'Модуль отсутствует'
-    s_log(u'Модуль отсутствует')
 
 # --------------temp measure-----------------------
 class TempThread(QtCore.QThread):  # работа с АЦП в потоке
@@ -67,6 +54,8 @@ class TempThread(QtCore.QThread):  # работа с АЦП в потоке
         super(TempThread, self).__init__(parent)
         self.temp_signal = temp_signal
         self.isRun = False
+        self.pwm0 = 0 #скважность ШИМ 0..1.0
+        self.pwm1 = 0
         self.counter=0 # ошибки
         self.counter2=0 # операции чтения
         self.temp_array = np.array([[0.0, 0],
@@ -215,7 +204,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     startTime2 = 0
     countdown1 = 0
     countdown2 = 0
-    level = [0 * 10000, 25 * 10000, 50 * 10000, 75 * 10000, 100 * 10000]
+    level = [0 /100, 25 / 100, 50 / 100, 75 / 100, 100 / 100]
 
     FI = 300
     FT = 15
@@ -353,28 +342,28 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 delta1 = str(datetime.datetime.now() - self.startTime1)[:7]
                 # ----проверяем границы температура относительно уставки
                 if self.MTemp1 < (self.T1 - 15):
-                    pi.hardware_PWM(SSRPwm0, Freq, self.level[4])
-                    i = self.level[4] / 10000
+                    self.tempthread.pwm0 = self.level[4]
+                    i = self.level[4] * 100
                     self.InfoPanel1.setHtml(metrocss.SetInfoPanelText(self.WorkText + delta1 + " " + str(i) + "%"))
 
                 elif (self.T1 - 15) <= self.MTemp1 < self.T1:
                     if self.deltaTRate1 >= 5:
-                        pi.hardware_PWM(SSRPwm0, Freq, self.level[0])
-                        i = self.level[0] / 10000
+                        self.tempthread.pwm0 = self.level[0]
+                        i = self.level[0]  * 100
                     elif 3 <= self.deltaTRate1 < 5:
-                        pi.hardware_PWM(SSRPwm0, Freq, self.level[1])
-                        i = self.level[1] / 10000
+                        self.tempthread.pwm0 = self.level[1]
+                        i = self.level[1] * 100
                     elif 1 <= self.deltaTRate1 < 3:
-                        pi.hardware_PWM(SSRPwm0, Freq, self.level[2])
-                        i = self.level[2] / 10000
+                        self.tempthread.pwm0 = self.level[2]
+                        i = self.level[2] * 100
                     elif self.deltaTRate1 < 1:
-                        pi.hardware_PWM(SSRPwm0, Freq, self.level[4])
-                        i = self.level[4] / 10000
+                        self.tempthread.pwm0 = self.level[4]
+                        i = self.level[4] * 100
 
                     self.InfoPanel1.setHtml(metrocss.SetInfoPanelText(self.WorkText + delta1 + " " + str(i) + "%"))
                 # ----уходим на выдержку-------------------------
                 elif self.MTemp1 >= self.T1:
-                    pi.hardware_PWM(SSRPwm0, Freq, self.level[0])
+                    self.tempthread.pwm0 = self.level[0]
                     self.State1 = 1
                     self.startTime1 = datetime.datetime.now()
                     self.countdown1 = datetime.timedelta(minutes=self.t1)
@@ -390,20 +379,20 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     delta1 = str((self.countdown1 - delta1))[:7]
 
                     if self.MTemp1 >= self.T1:
-                        pi.hardware_PWM(SSRPwm0, Freq, self.level[0])
-                        i = self.level[0] / 10000
+                        self.tempthread.pwm0 = self.level[0]
+                        i = self.level[0] * 100
                     elif (self.T1 - 1) <= self.MTemp1 < self.T1:
-                        pi.hardware_PWM(SSRPwm0, Freq, self.level[1])
-                        i = self.level[1] / 10000
+                        self.tempthread.pwm0 = self.level[1]
+                        i = self.level[1] * 100
                     elif (self.T1 - 2) <= self.MTemp1 < (self.T1 - 1):
-                        pi.hardware_PWM(SSRPwm0, Freq, self.level[2])
-                        i = self.level[2] / 10000
+                        self.tempthread.pwm0 = self.level[2]
+                        i = self.level[2] * 100
                     elif (self.T1 - 4) <= self.MTemp1 < (self.T1 - 2):
-                        pi.hardware_PWM(SSRPwm0, Freq, self.level[3])
-                        i = self.level[3] / 10000
+                        self.tempthread.pwm0 = self.level[3]
+                        i = self.level[3] * 100
                     elif (self.T1 - 4) > self.MTemp1:
-                        pi.hardware_PWM(SSRPwm0, Freq, self.level[4])
-                        i = self.level[4] / 10000
+                        self.tempthread.pwm0 = self.level[4]
+                        i = self.level[4] * 100
                     self.InfoPanel1.setHtml(metrocss.SetInfoPanelText(self.DelayText + delta1 + " " + str(i) + "%"))
 
                 # --------работа сделана------------------------
@@ -413,7 +402,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     self.setWorkzonePassive('1')
                     self.Line_65 = 0
                     self.InfoPanel1.setHtml(metrocss.SetInfoPanelText(self.WaitText))
-                    pi.hardware_PWM(SSRPwm0, Freq, 0)
+                    self.tempthread.pwm0 = self.level[0]
                     self.State1 = 0
                     self.justStarted1 = 0
                     GPIO.output(Cont1, 0)
@@ -425,28 +414,28 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 delta2 = str(datetime.datetime.now() - self.startTime2)[:7]
                 # ----проверяем границы температура относительно уставки
                 if self.MTemp2 < (self.T2 - 15):
-                    pi.hardware_PWM(SSRPwm1, Freq, self.level[4])
-                    p = self.level[4] / 10000
+                    self.tempthread.pwm1 = self.level[4]
+                    p = self.level[4] * 100
                     self.InfoPanel2.setHtml(metrocss.SetInfoPanelText(self.WorkText + delta2 + " " + str(p) + "%"))
 
                 elif (self.T2 - 15) <= self.MTemp2 < self.T2:
                     if self.deltaTRate2 >= 5:
-                        pi.hardware_PWM(SSRPwm1, Freq, self.level[0])
-                        p = self.level[0] / 10000
+                        self.tempthread.pwm1 = self.level[0]
+                        p = self.level[0] * 100
                     elif 3 <= self.deltaTRate2 < 5:
-                        pi.hardware_PWM(SSRPwm1, Freq, self.level[1])
-                        p = self.level[1] / 10000
+                        self.tempthread.pwm1 = self.level[1]
+                        p = self.level[1] * 100
                     elif 1 <= self.deltaTRate2 < 3:
-                        pi.hardware_PWM(SSRPwm1, Freq, self.level[2])
-                        p = self.level[2] / 10000
+                        self.tempthread.pwm1 = self.level[2]
+                        p = self.level[2] * 100
                     elif self.deltaTRate2 < 1:
-                        pi.hardware_PWM(SSRPwm1, Freq, self.level[4])
-                        p = self.level[4] / 10000
+                        self.tempthread.pwm1 = self.level[4]
+                        p = self.level[4] * 100
 
                     self.InfoPanel2.setHtml(metrocss.SetInfoPanelText(self.WorkText + delta2 + " " + str(p) + "%"))
                 # ----уходим на выдержку-------------------------
                 elif self.MTemp2 >= self.T2:
-                    pi.hardware_PWM(SSRPwm1, Freq, self.level[0])
+                    self.tempthread.pwm1 = self.level[0]
                     self.State2 = 1
                     self.startTime2 = datetime.datetime.now()
                     self.countdown2 = datetime.timedelta(minutes=self.t2)
@@ -462,20 +451,20 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     delta2 = str((self.countdown2 - delta2))[:7]
 
                     if self.MTemp2 >= self.T2:
-                        pi.hardware_PWM(SSRPwm1, Freq, self.level[0])
-                        p = self.level[0] / 10000
+                        self.tempthread.pwm1 = self.level[0]
+                        p = self.level[0] * 100
                     elif (self.T2 - 1) <= self.MTemp2 < self.T2:
-                        pi.hardware_PWM(SSRPwm1, Freq, self.level[1])
-                        p = self.level[1] / 10000
+                        self.tempthread.pwm1 = self.level[1]
+                        p = self.level[1] * 100
                     elif (self.T2 - 2) <= self.MTemp2 < (self.T2 - 1):
-                        pi.hardware_PWM(SSRPwm1, Freq, self.level[2])
-                        p = self.level[2] / 10000
+                        self.tempthread.pwm1 = self.level[2]
+                        p = self.level[2] * 100
                     elif (self.T2 - 4) <= self.MTemp2 < (self.T2 - 2):
-                        pi.hardware_PWM(SSRPwm1, Freq, self.level[3])
-                        p = self.level[3] / 10000
+                        self.tempthread.pwm1 = self.level[3]
+                        p = self.level[3] * 100
                     elif (self.T2 - 4) > self.MTemp2:
-                        pi.hardware_PWM(SSRPwm1, Freq, self.level[4])
-                        p = self.level[4] / 10000
+                        self.tempthread.pwm1 = self.level[4]
+                        p = self.level[4] * 100
                     self.InfoPanel2.setHtml(metrocss.SetInfoPanelText(self.DelayText + delta2 + " " + str(p) + "%"))
 
                 # --------работа сделана------------------------
@@ -485,7 +474,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     self.setWorkzonePassive('2')
                     self.Line_35 = 0
                     self.InfoPanel2.setHtml(metrocss.SetInfoPanelText(self.WaitText))
-                    pi.hardware_PWM(SSRPwm1, Freq, 0)
+                    self.tempthread.pwm1 = self.level[0]
                     self.State2 = 0
                     self.justStarted2 = 0
                     GPIO.output(Cont2, 0)
@@ -1156,13 +1145,19 @@ def save_settings(sets):
 
 def call_board_ini():
 
-    GPIO.setup([Fan1, Fan2, OEBuff, SSRPwm0, SSRPwm1, Cont1, Cont2], GPIO.OUT)
-    GPIO.output([Fan1, Fan2, OEBuff, SSRPwm0, SSRPwm0, Cont1, Cont2], 0)
+    try:
+        COM = MySerial.ComPort(portName, baudRate, timeout=0.05)
+    except:
+        raise Exception('Error openning port!')
 
-    pi.set_PWM_dutycycle(SSRPwm0, 0)  # без этого не отрабатывает первый запуск
-    pi.set_PWM_dutycycle(SSRPwm1, 0)  # после выхода и нового запуска кода
+    try:
+        MVA = Owen.OwenDevice(COM, 16)
+        print MVA
+    except Owen.OwenProtocolError:
+        print u'Модуль ввода отсутствует'
+        s_log(u'Модуль ввода отсутствует')
 
-    # создаем последовательный порт
+
     it = True
     counter = 0
     while it:
@@ -1181,6 +1176,36 @@ def call_board_ini():
             counter += 1
             print(u'Модуль ввода недоступен ' + str(counter) + ' ' + u'раз')
             s_log(u'Модуль ввода недоступен ' + str(counter) + ' ' + u'раз')
+            if counter > 9: it = False
+            if COM.isOpen():
+                COM.close()
+                COM.open()
+    try:
+        MU = Owen.OwenDevice(COM, 8)
+        print MU
+    except Owen.OwenProtocolError:
+        print u'Модуль вывода отсутствует'
+        s_log(u'Модуль вывода отсутствует')
+
+
+    it = True
+    counter = 0
+    while it:
+        try:
+            devName = MU.GetDeviceName()
+            _name = u'Модуль ввода: {}'.format(devName)
+            #s_log(_name)
+            print _name
+            #Прошивка
+            result = MU.GetFirmwareVersion()
+            _firm = u'Версия ПО: {}'.format(result)
+            s_log(_name + ' ' + _firm)
+            print _firm
+            it = False
+        except Owen.OwenProtocolError:
+            counter += 1
+            print(u'Модуль вывода недоступен ' + str(counter) + ' ' + u'раз')
+            s_log(u'Модуль вывода недоступен ' + str(counter) + ' ' + u'раз')
             if counter > 9: it = False
             if COM.isOpen():
                 COM.close()

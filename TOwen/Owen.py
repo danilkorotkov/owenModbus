@@ -237,6 +237,7 @@ class OwenProtocol:#Класс, реализующий протокол ОВЕН
 
     def packFloat24(self,value):#упаковываем число с плавающей точкой для передачи на устройство
         self.data = struct.pack('>f',value)[:-1]
+        #print 'inPackingFloat24', value, '=', repr(self.data)
 
     def packString(self,value):        
         self.data = value[::-1]
@@ -277,10 +278,14 @@ class OwenProtocol:#Класс, реализующий протокол ОВЕН
     def unpackInt16(self, withIndex = False, withTime = False):#извлекает из данных целое число со знаком
         if not (self.dataSize >= 1):
             raise OwenUnpackError('OwenProtocol::wrong size of data ({}) when unsigned short unpacking!'.format(self.dataSize),self.data)
-        if self.dataSize == 1: 
+        #print 'data=', repr(self.data), 'len=', len(self.data)
+        if self.dataSize == 1:
             self.data = '\x00' + self.data  # дополняем до двух байтов
         #value = ord(self.data[1]) + (ord(self.data[0])<<8 & 0xffff);        
+        #print 'data=', repr(self.data), 'len=', len(self.data)
         value = struct.unpack('>h',self.data[0:2])[0]
+        #print 'value=', value
+
         result = dict(value = value, time = -1, index = -1)
         return result
 
@@ -499,17 +504,20 @@ class OwenDevice:
             hash = self.GetHash(hashOrName)
         else:
             hash = hashOrName
+
+        #print 'hash=', hash
         return hash
         
-    def GetPingPong(self, hash, addrOffset=0, answerDataSize = -1):
+    def GetPingPong(self, hash, addrOffset=0, answerDataSize = -1, request = True):
         """
         отправка фрейма запроса , получение ответа,
         addrOffset - смещение относительно базового адреса,
         answerDataSize - сколько байт данных ждем от устройства
         """
         self.owenProtocol.address=self.baseAddress+addrOffset
-        self.owenProtocol.data = ''
-        self.PackFrame2Ascii(hash,True)
+        if request:
+            self.owenProtocol.data = ''
+        self.PackFrame2Ascii(hash, request)
         self.WriteToPort()
         self.owenProtocol.CalcAnswerBytes(answerDataSize)
         self.ReadFromPort()
@@ -613,7 +621,18 @@ class OwenDevice:
             else:
                 return self.owenProtocol.unpackString()['value']
         else:
-            raise OwenProtocolError('Owen::no answer from device!')                
+            raise OwenProtocolError('Owen::no answer from device!')
+
+    def writeFloat24(self, hashOrName, addrOffset=0, value = 0, withTime = False, withIndex = False):
+        hash = self.TakeHashFrom(hashOrName)
+        self.owenProtocol.packFloat24(value)
+        if self.GetPingPong(hash,addrOffset, request=False):
+            if withTime or withIndex:
+                return self.owenProtocol.unpackFloat24()
+            else:
+                return self.owenProtocol.unpackFloat24()['value']
+        else:
+            raise OwenProtocolError('Owen::no answer from device!')
             
 def test(): 
     print 'Test of owen class started...'        
