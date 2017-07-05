@@ -364,12 +364,15 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         portIsBusy = True
         try:
             print 'r.OE '+ portTuple[port], MU.writeFloat24('r.OE', port, value)
+            self.tempthread.counter2 += 1
         except Owen.OwenProtocolError:
             try:
                 print 'r.OE ' + portTuple[port], MU.writeFloat24('r.OE', port, value)
+                self.tempthread.counter2 += 1
             except Owen.OwenProtocolError:
                 print u'Ошибка установки состояния порта ', portTuple[port]
                 s_log(u'Ошибка установки состояния порта ', portTuple[port])
+                self.tempthread.counter += 1
         portIsBusy = False
 
 
