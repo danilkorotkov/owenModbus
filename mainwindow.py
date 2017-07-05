@@ -265,6 +265,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     coldStart = 0  # запуск программы после загрузки
     Heater1 = 0  # температура тэнов
     Heater2 = 0
+    pwmDelayCounter0 = 0 # 0 можно менять скважность шим
+    pwmDelayCounter1 = 0 # 0 можно менять скважность шим
 
     lockedBut = True
     State1 = 0  # флаги состояния нагрев/выдержка
@@ -350,7 +352,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
 
     # ----------------------------methods------------------------------
-    def pwmSet(self, port, value):
+    def pwmSet(self, port, value, Stop = False):
         '''
         управляем включением внешних устройств (ШИМ или просто вкл/выкл)
         :param port: имя порта, к примеру Fan1
@@ -358,6 +360,22 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         :return:
         '''
         global portIsBusy
+        # отсекаем вызовы по смене скважности
+        if port == SSRPwm0:
+            if self.pwmDelayCounter0 >0 and (not Stop):
+                self.pwmDelayCounter0 += 1
+                if self.pwmDelayCounter0 > round(Freq, 0): self.pwmDelayCounter0 = 0
+                print 'return'
+                return
+            else: self.pwmDelayCounter0 = (self.pwmDelayCounter0 + 1) * int(not Stop)
+
+        if port == SSRPwm1:
+            if self.pwmDelayCounter1 >0 and (not Stop):
+                self.pwmDelayCounter1 += 1
+                if self.pwmDelayCounter1 > round(Freq, 0): self.pwmDelayCounter1 = 0
+                return
+            else: self.pwmDelayCounter1 = (self.pwmDelayCounter1 + 1) * int(not Stop)
+
         while portIsBusy:
             print 'pwm busy', portIsBusy
             time.sleep(0.05)
@@ -377,6 +395,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
 
     def time_msg(self, out):
+        '''
+        :param out: список строковых параметров времени
+        :return: ничего
+        '''
+
         self.labeloftime.setText(
             _translate(
                 "Calibrator",
@@ -499,7 +522,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     self.setWorkzonePassive('1')
                     self.Line_65 = 0
                     self.InfoPanel1.setHtml(metrocss.SetInfoPanelText(self.WaitText))
-                    self.pwmSet(SSRPwm0, self.level[0])
+                    self.pwmSet(SSRPwm0, self.level[0], Stop=True)
                     self.State1 = 0
                     self.justStarted1 = 0
                     self.pwmSet(Cont1, 0)
@@ -571,7 +594,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                     self.setWorkzonePassive('2')
                     self.Line_35 = 0
                     self.InfoPanel2.setHtml(metrocss.SetInfoPanelText(self.WaitText))
-                    self.pwmSet(SSRPwm1, self.level[0])
+                    self.pwmSet(SSRPwm1, self.level[0], Stop=True)
                     self.State2 = 0
                     self.justStarted2 = 0
                     self.pwmSet(Cont2, 0)
@@ -724,7 +747,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self.setWorkzonePassive(point)
                 self.Line_65 = 0
                 self.InfoPanel1.setHtml(metrocss.SetInfoPanelText(self.WaitText))
-                self.pwmSet(SSRPwm0, 0)
+                self.pwmSet(SSRPwm0, 0, Stop=True)
                 self.startHeat1 = 0
                 self.startDelay1 = 0
                 self.justStarted1 = 0
@@ -740,7 +763,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self.setWorkzonePassive(point)
                 self.Line_35 = 0
                 self.InfoPanel2.setHtml(metrocss.SetInfoPanelText(self.WaitText))
-                self.pwmSet(SSRPwm1, 0)
+                self.pwmSet(SSRPwm1, 0, Stop=True)
                 self.startHeat2 = 0
                 self.startDelay2 = 0
                 self.justStarted2 = 0
