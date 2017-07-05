@@ -3,9 +3,9 @@ import  time, csv, datetime, minimalmodbus#, sys, string
 from PyQt4 import QtCore, QtGui, uic
 from PyQt4.Qt import Qt
 from PyQt4.QtGui import *
-import RPi.GPIO as GPIO
 from PyQt4.QtCore import pyqtSlot, QObject, SIGNAL
 import numpy as np
+
 #-----------------owen protocol-------------------------
 from TOwen import Owen
 from TSystem import MySerial
@@ -24,8 +24,6 @@ Ui_MainWindow, QtBaseClass = uic.loadUiType(MainInterfaceWindow)
 # ---------------globals--------------------------------
 minimalmodbus.CLOSE_PORT_AFTER_EACH_CALL = True
 DEGREE = u"\u00B0" + 'C'
-GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BCM)
 
 portName = '/dev/ttyUSB0'
 baudRate = 57600
@@ -48,6 +46,8 @@ FI = 300 # fan interval, s
 FT = 15  #fan active time, s
 
 portIsBusy = False
+
+mModInitStr='Modbus: '
 
 error_buffer = ['','','','','']
 def s_log(a):
@@ -75,23 +75,23 @@ except Owen.OwenProtocolError:
     s_log(u'Модуль вывода отсутствует')
 
 MMU = minimalmodbus.Instrument(portName, slaveaddress=8, mode='rtu') # port name, slave address (in decimal)
-MMU.debug = True
+MMU.debug = False
 MMU.serial.baudrate = baudRate
 
 try:
     MMU.write_register(pwmPeriodReg + SSRPwm0, Freq)
     MMU.write_register(pwmPeriodReg + SSRPwm1, Freq)
     print u'Корректный период ШИМ'
-    s_log(u'Корректный период ШИМ')
+    mModInitStr += u'Корректный период ШИМ,'
 except ValueError or TypeError or IOError:
     try:
         MMU.write_register(pwmPeriodReg + SSRPwm0, Freq)
         MMU.write_register(pwmPeriodReg + SSRPwm1, Freq)
         print u'Корректный период ШИМ'
-        s_log(u'Корректный период ШИМ')
+        mModInitStr += u'Корректный период ШИМ,'
     except ValueError or TypeError or IOError:
         print u'Ошибка установки периода ШИМ'
-        s_log(u'Ошибка установки периода ШИМ')
+        mModInitStr += u'Ошибка установки периода ШИМ,'
 
 try:
     MMU.write_register(SSRPwm0, 0)
@@ -101,7 +101,7 @@ try:
     MMU.write_register(Cont1, 0)
     MMU.write_register(Cont2, 0)
     print u'Порты в нуле'
-    s_log(u'Порты в нуле')
+    mModInitStr += u' Порты в нуле'
 except ValueError or TypeError or IOError:
     try:
         MMU.write_register(SSRPwm0, 0)
@@ -111,10 +111,12 @@ except ValueError or TypeError or IOError:
         MMU.write_register(Cont1, 0)
         MMU.write_register(Cont2, 0)
         print u'Порты в нуле'
-        s_log(u'Порты в нуле')
+        mModInitStr += u' Порты в нуле'
     except ValueError or TypeError or IOError:
         print u'Ошибка установки портов'
-        s_log(u'Ошибка установки портов')
+        mModInitStr += u' Ошибка установки портов'
+
+s_log(mModInitStr)
 
 # --------------temp measure-----------------------
 class TempThread(QtCore.QThread):  # работа с АЦП в потоке
@@ -357,6 +359,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         управляем включением внешних устройств (ШИМ или просто вкл/выкл)
         :param port: имя порта, к примеру Fan1
         :param value: 0.0-1.0
+        :param Stop = True обойти ограничение по частоте вызовов смены скважности
         :return:
         '''
         global portIsBusy
@@ -776,7 +779,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def All_is_Clear(self):  # корректное завершение
         self.tempthreadcontrol(0)
         self.timelabel.stop()
-        GPIO.cleanup()
         self.close()
 
     def __del__(self):  # какая-то системная
