@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-import  time, csv, datetime, minimalmodbus#, sys, string
+import  time, csv, datetime
+import minimalmodbus, sys#, string
+minimalmodbus.CLOSE_PORT_AFTER_EACH_CALL = True
+minimalmodbus.TIMEOUT = 0.07
 from PyQt4 import QtCore, QtGui, uic
 from PyQt4.Qt import Qt
 from PyQt4.QtGui import *
@@ -22,7 +25,9 @@ MainInterfaceWindow = "metro_uic.ui"
 Ui_MainWindow, QtBaseClass = uic.loadUiType(MainInterfaceWindow)
 
 # ---------------globals--------------------------------
-minimalmodbus.CLOSE_PORT_AFTER_EACH_CALL = True
+reload(sys)  
+sys.setdefaultencoding('utf-8')
+
 DEGREE = u"\u00B0" + 'C'
 
 portName = '/dev/ttyUSB0'
@@ -36,9 +41,9 @@ pwmPeriodReg = 32
 SSRPwm1 = 1
 SSRPwm0 = 0 #owen MU offset
 
-portTuple = ('ТТР линии 6.5', 'ТТР линии 3.5',
-             'Вентилятор  линии 6.5', 'Вентилятор  линии 3.5',
-             'Контактор  линии 6.5', 'Контактор  линии 3.5')
+portTuple = (u'ТТР линии 6.5', u'ТТР линии 3.5',
+             u'Вентилятор  линии 6.5', u'Вентилятор  линии 3.5',
+             u'Контактор  линии 6.5', u'Контактор  линии 3.5')
 
 Freq = 5 #pwm period
 sets = {}
@@ -64,14 +69,14 @@ try:
     MVA = Owen.OwenDevice(COM, 16)
     print MVA
 except Owen.OwenProtocolError:
-    print u'Модуль ввода отсутствует'
+    print 'Модуль ввода отсутствует'
     s_log(u'Модуль ввода отсутствует')
 
 try:
     MU = Owen.OwenDevice(COM, 8)
     print MU
 except Owen.OwenProtocolError:
-    print u'Модуль вывода отсутствует'
+    print 'Модуль вывода отсутствует'
     s_log(u'Модуль вывода отсутствует')
 
 MMU = minimalmodbus.Instrument(portName, slaveaddress=8, mode='rtu') # port name, slave address (in decimal)
@@ -81,16 +86,16 @@ MMU.serial.baudrate = baudRate
 try:
     MMU.write_register(pwmPeriodReg + SSRPwm0, Freq)
     MMU.write_register(pwmPeriodReg + SSRPwm1, Freq)
-    print u'Корректный период ШИМ'
+    print 'Корректный период ШИМ'
     mModInitStr += u'Корректный период ШИМ,'
-except ValueError or TypeError or IOError:
+except IOError:
     try:
         MMU.write_register(pwmPeriodReg + SSRPwm0, Freq)
         MMU.write_register(pwmPeriodReg + SSRPwm1, Freq)
-        print u'Корректный период ШИМ'
+        print 'Корректный период ШИМ'
         mModInitStr += u'Корректный период ШИМ,'
-    except ValueError or TypeError or IOError:
-        print u'Ошибка установки периода ШИМ'
+    except IOError:
+        print 'Ошибка установки периода ШИМ'
         mModInitStr += u'Ошибка установки периода ШИМ,'
 
 try:
@@ -100,9 +105,9 @@ try:
     MMU.write_register(Fan2, 0)
     MMU.write_register(Cont1, 0)
     MMU.write_register(Cont2, 0)
-    print u'Порты в нуле'
+    print 'Порты в нуле'
     mModInitStr += u' Порты в нуле'
-except ValueError or TypeError or IOError:
+except IOError:
     try:
         MMU.write_register(SSRPwm0, 0)
         MMU.write_register(SSRPwm1, 0)
@@ -110,10 +115,10 @@ except ValueError or TypeError or IOError:
         MMU.write_register(Fan2, 0)
         MMU.write_register(Cont1, 0)
         MMU.write_register(Cont2, 0)
-        print u'Порты в нуле'
+        print 'Порты в нуле'
         mModInitStr += u' Порты в нуле'
-    except ValueError or TypeError or IOError:
-        print u'Ошибка установки портов'
+    except IOError:
+        print 'Ошибка установки портов'
         mModInitStr += u' Ошибка установки портов'
 
 s_log(mModInitStr)
@@ -165,7 +170,7 @@ class TempThread(QtCore.QThread):  # работа с АЦП в потоке
                     except Owen.OwenUnpackError as e:
                         self.error_unpack(e, terr, Ch, s)  # обрабатываем ошибку раскодировки данных
                     except Owen.OwenProtocolError:
-                        print u'Модуль ввода не ответил, канал: ' + str(Ch)
+                        print 'Модуль ввода не ответил, канал: ' + str(Ch)
                         s_log(u'Модуль ввода не ответил, канал: ' + str(Ch) + ' ' + str(
                                     s.tm_hour) + ':' + str(s.tm_min) + ':' + str(s.tm_sec))
                         self.counter += 1
@@ -194,31 +199,31 @@ class TempThread(QtCore.QThread):  # работа с АЦП в потоке
             self.temp_array[Ch][0] = terr
             # это код ошибки
             if ord(e.data[0]) == 0xfd:
-                print u'Обрыв датчика'
+                print 'Обрыв датчика'
                 s_log(u'Обрыв датчика, канал: ' + str(Ch) + ' ' + str(s.tm_hour) + ':' + str(
                     s.tm_min) + ':' + str(s.tm_sec))
             elif ord(e.data[0]) == 0xff:
-                print u'Некорректный калибровочный коэффициент'
+                print 'Некорректный калибровочный коэффициент'
                 s_log(u'Некорректный калибровочный коэффициент, канал: ' + str(Ch) + ' ' + str(
                     s.tm_hour) + ':' + str(s.tm_min) + ':' + str(s.tm_sec))
             elif ord(e.data[0]) == 0xfb:
-                print u'Измеренное значение слишком мало'
+                print 'Измеренное значение слишком мало'
                 s_log(u'Измеренное значение слишком мало, канал: ' + str(Ch) + ' ' + str(
                     s.tm_hour) + ':' + str(s.tm_min) + ':' + str(s.tm_sec))
             elif ord(e.data[0]) == 0xfa:
-                print u'Измеренное значение слишком велико'
+                print 'Измеренное значение слишком велико'
                 s_log(u'Измеренное значение слишком велико, канал: ' + str(Ch) + ' ' + str(
                     s.tm_hour) + ':' + str(s.tm_min) + ':' + str(s.tm_sec))
             elif ord(e.data[0]) == 0xf7:
-                print u'Датчик отключен'
+                print 'Датчик отключен'
                 s_log(u'Датчик отключен, канал: ' + str(Ch) + ' ' + str(
                     s.tm_hour) + ':' + str(s.tm_min) + ':' + str(s.tm_sec))
             elif ord(e.data[0]) == 0xf6:
-                print u'Данные температуры не готовы'
+                print 'Данные температуры не готовы'
                 s_log(u'Данные температуры не готовы ' + str(Ch) + ' ' + str(
                     s.tm_hour) + ':' + str(s.tm_min) + ':' + str(s.tm_sec))
             elif ord(e.data[0]) == 0xf0:
-                print u'Значение заведомо неверно'
+                print 'Значение заведомо неверно'
                 s_log(u'Значение заведомо неверно, канал: ' + str(Ch) + ' ' + str(
                     s.tm_hour) + ':' + str(s.tm_min) + ':' + str(s.tm_sec))
         else:
@@ -390,9 +395,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             try:
                 print 'r.OE ' + portTuple[port], MU.writeFloat24('r.OE', port, value)
                 self.tempthread.counter2 += 1
-            except Owen.OwenProtocolError:
-                print u'Ошибка установки состояния порта ', portTuple[port]
-                s_log(u'Ошибка установки состояния порта ', portTuple[port])
+            except Owen.OwenProtocolError as err:
+                print err
+                print 'Ошибка установки состояния порта ', portTuple[port]
+                s_log(u'Ошибка установки состояния порта '+ portTuple[port])
                 self.tempthread.counter += 1
         portIsBusy = False
 
@@ -1273,12 +1279,12 @@ def call_board_ini():
             devName = MVA.GetDeviceName()
             _name = u'Модуль ввода: {}'.format(devName)
             #s_log(_name)
-            print _name
+            print 'Модуль ввода: ' + devName
             #Прошивка
             result = MVA.GetFirmwareVersion()
             _firm = u'Версия ПО: {}'.format(result)
             s_log(_name + ' ' + _firm)
-            print _firm
+            print 'Версия ПО: ' + result
             it = False
         except Owen.OwenProtocolError:
             counter += 1
@@ -1295,17 +1301,16 @@ def call_board_ini():
         try:
             devName = MU.GetDeviceName()
             _name = u'Модуль вывода: {}'.format(devName)
-            #s_log(_name)
-            print _name
+            print 'Модуль вывода: ' + devName
             #Прошивка
             result = MU.GetFirmwareVersion()
             _firm = u'Версия ПО: {}'.format(result)
+            print 'Версия ПО: ' + result
             s_log(_name + ' ' + _firm)
-            print _firm
             it = False
         except Owen.OwenProtocolError:
             counter += 1
-            print(u'Модуль вывода недоступен ' + str(counter) + ' ' + u'раз')
+            print('Модуль вывода недоступен ' + str(counter) + ' раз')
             s_log(u'Модуль вывода недоступен ' + str(counter) + ' ' + u'раз')
             if counter > 9: it = False
             if COM.isOpen():
