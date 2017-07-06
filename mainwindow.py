@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 import  time, csv, datetime
+<<<<<<< HEAD
 import minimalmodbus, sys#, string
+=======
+import minimalmodbus#, sys, string
+>>>>>>> origin/master
 minimalmodbus.CLOSE_PORT_AFTER_EACH_CALL = True
 minimalmodbus.TIMEOUT = 0.07
 from PyQt4 import QtCore, QtGui, uic
@@ -25,8 +29,11 @@ MainInterfaceWindow = "metro_uic.ui"
 Ui_MainWindow, QtBaseClass = uic.loadUiType(MainInterfaceWindow)
 
 # ---------------globals--------------------------------
+<<<<<<< HEAD
 reload(sys)  
 sys.setdefaultencoding('utf-8')
+=======
+>>>>>>> origin/master
 
 DEGREE = u"\u00B0" + 'C'
 
@@ -95,7 +102,11 @@ except IOError:
         print 'Корректный период ШИМ'
         mModInitStr += u'Корректный период ШИМ,'
     except IOError:
+<<<<<<< HEAD
         print 'Ошибка установки периода ШИМ'
+=======
+        print u'Ошибка установки периода ШИМ'
+>>>>>>> origin/master
         mModInitStr += u'Ошибка установки периода ШИМ,'
 
 try:
@@ -118,7 +129,11 @@ except IOError:
         print 'Порты в нуле'
         mModInitStr += u' Порты в нуле'
     except IOError:
+<<<<<<< HEAD
         print 'Ошибка установки портов'
+=======
+        print u'Ошибка установки портов'
+>>>>>>> origin/master
         mModInitStr += u' Ошибка установки портов'
 
 s_log(mModInitStr)
@@ -397,7 +412,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self.tempthread.counter2 += 1
             except Owen.OwenProtocolError as err:
                 print err
+<<<<<<< HEAD
                 print 'Ошибка установки состояния порта ', portTuple[port]
+=======
+                print u'Ошибка установки состояния порта ', portTuple[port]
+>>>>>>> origin/master
                 s_log(u'Ошибка установки состояния порта '+ portTuple[port])
                 self.tempthread.counter += 1
         portIsBusy = False
