@@ -1,5 +1,5 @@
 # -*- coding: utf8 -*-
-import serial, serial.rs485
+import serial
 import time
 
 #класс последовательного порта с логированием данных

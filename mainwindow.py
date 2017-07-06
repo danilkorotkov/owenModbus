@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-import  time, csv, datetime, minimalmodbus#, sys, string
+import  time, csv, datetime
+import minimalmodbus#, sys, string
+minimalmodbus.CLOSE_PORT_AFTER_EACH_CALL = True
+minimalmodbus.TIMEOUT = 0.07
 from PyQt4 import QtCore, QtGui, uic
 from PyQt4.Qt import Qt
 from PyQt4.QtGui import *
@@ -22,7 +25,7 @@ MainInterfaceWindow = "metro_uic.ui"
 Ui_MainWindow, QtBaseClass = uic.loadUiType(MainInterfaceWindow)
 
 # ---------------globals--------------------------------
-minimalmodbus.CLOSE_PORT_AFTER_EACH_CALL = True
+
 DEGREE = u"\u00B0" + 'C'
 
 portName = '/dev/ttyUSB0'
@@ -36,9 +39,9 @@ pwmPeriodReg = 32
 SSRPwm1 = 1
 SSRPwm0 = 0 #owen MU offset
 
-portTuple = ('ТТР линии 6.5', 'ТТР линии 3.5',
-             'Вентилятор  линии 6.5', 'Вентилятор  линии 3.5',
-             'Контактор  линии 6.5', 'Контактор  линии 3.5')
+portTuple = (u'ТТР линии 6.5', u'ТТР линии 3.5',
+             u'Вентилятор  линии 6.5', u'Вентилятор  линии 3.5',
+             u'Контактор  линии 6.5', u'Контактор  линии 3.5')
 
 Freq = 5 #pwm period
 sets = {}
@@ -83,13 +86,13 @@ try:
     MMU.write_register(pwmPeriodReg + SSRPwm1, Freq)
     print u'Корректный период ШИМ'
     mModInitStr += u'Корректный период ШИМ,'
-except ValueError or TypeError or IOError:
+except IOError:
     try:
         MMU.write_register(pwmPeriodReg + SSRPwm0, Freq)
         MMU.write_register(pwmPeriodReg + SSRPwm1, Freq)
         print u'Корректный период ШИМ'
         mModInitStr += u'Корректный период ШИМ,'
-    except ValueError or TypeError or IOError:
+    except IOError:
         print u'Ошибка установки периода ШИМ'
         mModInitStr += u'Ошибка установки периода ШИМ,'
 
@@ -102,7 +105,7 @@ try:
     MMU.write_register(Cont2, 0)
     print u'Порты в нуле'
     mModInitStr += u' Порты в нуле'
-except ValueError or TypeError or IOError:
+except IOError:
     try:
         MMU.write_register(SSRPwm0, 0)
         MMU.write_register(SSRPwm1, 0)
@@ -112,7 +115,7 @@ except ValueError or TypeError or IOError:
         MMU.write_register(Cont2, 0)
         print u'Порты в нуле'
         mModInitStr += u' Порты в нуле'
-    except ValueError or TypeError or IOError:
+    except IOError:
         print u'Ошибка установки портов'
         mModInitStr += u' Ошибка установки портов'
 
@@ -390,9 +393,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             try:
                 print 'r.OE ' + portTuple[port], MU.writeFloat24('r.OE', port, value)
                 self.tempthread.counter2 += 1
-            except Owen.OwenProtocolError:
+            except Owen.OwenProtocolError as err:
+                print err
                 print u'Ошибка установки состояния порта ', portTuple[port]
-                s_log(u'Ошибка установки состояния порта ', portTuple[port])
+                s_log(u'Ошибка установки состояния порта '+ portTuple[port])
                 self.tempthread.counter += 1
         portIsBusy = False
 
